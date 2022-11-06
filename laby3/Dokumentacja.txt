@@ -1,0 +1,20 @@
+
+#autor Patryk Dudziński
+#data utworzenia 27.10.2022
+#wersja v1.0
+
+
+#program do sprawdzania czy puls wybiega poza normę (zgodnie z opisem):
+
+"wartość częstotliwości spoza przedziału od 8 do 14 (co odpowiada pulsowi spoza zakresu 50-80 uderzeń na minutę) 
+uznawana jest za niepoprawną i powoduje pojawienie się na wyjściu programu odpowiedniego komunikatu; w pozostałych przypadkach nie jest generowany żaden komunikat."
+
+#korzystanie z programu: należy wstawić odpowiednią ścieżkę do programu, skompilować go (w trybie NORMAL_TETNO), następnie umieścić plik z nazwą jak wścieżce z danymi  
+po skompilowania programu. można go włączyć w terminalu i zobaczymy komunikat o częstotliwościach serca.
+
+# dane wejściowe programu przyjmuje najlepiej wartośći w  formacie: ([cokolwiek {cokolwiek }] " " liczba "\n" | "\n" )   
+
+cokolwiek = wszystkie znaki asci oprócz '\n'   oraz ' '
+liczba = (cyfra {cyfra} ["."] cyfra {cyfra} | cyfra {cyfra})
+
+#dane wyjściowe  komunikaty: informóją o końcu priogramu, błędnych danych, pliku nie istnjejącym, komunikat o nie powrawnym pulsie)
