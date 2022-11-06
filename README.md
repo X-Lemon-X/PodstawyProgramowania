@@ -1,1 +1,1 @@
-puste
+Repozytorium ze wszystkimi programmami z Podstaw Programowania

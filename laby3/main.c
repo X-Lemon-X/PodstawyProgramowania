@@ -212,7 +212,7 @@ void Tetno()
         }
 
         #ifdef TESTING_TETNO  //dla testów wypisuje watrtości przeczytane z każdej lini
-            printf("Przeczytana wartość to (float): %f     (int): %d,    linia:%s", valuef, value, line);
+            printf("Przeczytana wartość to (float): %f     (int): %d,    lpl: %d -> linia:%s", valuef, value, countLines, line);
         #endif
 
         if(countLines == 99)  // co 99 lini powina zosatć obliczone tetno okre t=10s
@@ -239,6 +239,12 @@ void Tetno()
             countZeros=0;       // resetuje licznik przejśc przez zera i przeczytanych lini dla nowej kolumny z informacjami 
             countLines=0;
         }
+
+        for (size_t i = 0; i < sizeof(line); i++)
+        {
+            line[i]= '\000';  //czyści buffor dla następnej lini
+        }
+        
 	}
 
 }
@@ -260,18 +266,20 @@ int DecodingValues(char string[], size_t size ,float *value, char spliter)
     char buffor[size];
     size_t a=0;
 
-    for (size_t i = 0; i < size; i++)       //szuka elementu ' ' który jest znakiem symboliczny oznaczającym rozpoczęcie liczby 
+    for (size_t i = 0; i < size; i++)
     {
-        buffor[i]='\000';    //czyści buffor do którego zostanie wpisana liczba aby nie tracić czu w innej pętli wykonywane jest w główenj pętli  
+        buffor[i]='\000';    //czyści buffor do którego zostanie wpisana liczby
+    }
+    
 
+    for (size_t i = 0; i < size; i++)       //szuka elementu ' ' który jest znakiem symboliczny oznaczającym rozpoczęcie liczby 
+    {          
         if(string[i] == ' ')      // sprwdza czy 
         {
             i++;    //pomijamy sprawdzanie elementu ' '
 
             for (; i < size; i++)   //dla każdego elementu po znaku ' ' sprawdza które są liczbami i wpisuje znak(z częscią liczby) do buffora 
             {   
-                buffor[i]='\000';
-                
                 //sprawdza czy znaki w pliki txt mogą być liczbą lub jej częścią
                 if(1 == CkeckCharForNumber(string[i],&buffor[a])) a++; 
             }
