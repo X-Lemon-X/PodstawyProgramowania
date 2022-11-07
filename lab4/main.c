@@ -20,7 +20,7 @@ void WypelnijIloczynem(struct Tablica *,int x, int y);
 void CleanTable(struct Tablica *);
 void PrintTable(struct Tablica tablica);
 void ChangeSignsTable(struct Tablica *);
-void Menu();
+int DisplayMenu();
 
 
 int main()
@@ -28,33 +28,51 @@ int main()
     printf("\nStart\n");
 
     struct Tablica tablica;
-    CleanTable(&tablica);
+    tablica.sizeX = TABLE_SIZE_X;
+    tablica.sizeY = TABLE_SIZE_Y;
 
-    WypelnijIloczynem(&tablica,7,3);
+    while (1)
+    {
+        switch (DisplayMenu())
+        {
+        case 1:
+            PrintTable(tablica);
+            break;
+        case 2:
+            ChangeSignsTable(&tablica);
+            break;
+        case 3:
+            CleanTable(&tablica);
+            break;
+        case 4:
+            WypelnijIloczynem(&tablica,7,3);
+            break;
+        case 5:
+            printf("\nStop\n");
+            return 0;
+            break;
 
-    PrintTable(tablica);
-
-    ChangeSignsTable(&tablica);
-
-    PrintTable(tablica);
-
-    Menu();
-
-    printf("\nStop\n");
+        default:
+            printf("zła obcja");
+            break;
+        }
+    }
+    
 }
 
-void Menu()
+int DisplayMenu()
 {
     int size=5;
     struct Menu menu[5] =
     {   
-        {"Opcja 0"},
-        {"Opcja 1"},
-        {"Opcja 2"},
-        {"Opcja 3"},
-        {"Opcja 4"},
+        {"1 - PrintTable"},
+        {"2 - inverseTable"},
+        {"3 - CleanTable"},
+        {"4 - FillWithCR"},
+        {"5 - endProgram"},
     };
 
+    printf("\n--------------------[MENU]-----------------------\n");
 
     for (size_t i = 0; i < size; i++)
     {
@@ -64,31 +82,19 @@ void Menu()
     int opcja=0;
     printf("Wybierz opcję: ");
     scanf("%i", &opcja);
-    
-    switch (opcja)
+
+    opcja -= 1;
+
+    if(opcja < size && opcja >=0)
     {
-    case 0:
-        printf("wpbrałeś: 0");
-        break;
-    case 1:
-        printf("wpbrałeś: 1");
-        break;
-    case 2:
-        printf("wpbrałeś: 2");
-        break;
-    case 3:
-        printf("wpbrałeś: 3");
-        break;
-    case 4:
-        printf("wpbrałeś: 4");
-        break;
-
-    default:
-        printf("zła obcja");
-        Menu();
-        break;
+        printf("\nwybrałęś: %s \n", menu[opcja].string);
+        return ++opcja;
     }
-
+        
+    else
+        return -1;
+        
+    
 }
 
 void ChangeSignsTable(struct Tablica *tablica)
