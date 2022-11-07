@@ -5,7 +5,7 @@
 //------program tętno------------ 
 //#define TESTING_TETNO
 #define NORMAL_TETNO
-#define FILEPATH "/home/lemonx/IT/podstawy programowania/laby3/dane3.txt"
+#define FILEPATH "/home/lemonx/IT/podstawy programowania/laby3/dane1.txt"
 
 
 //---------inne programy---------
@@ -188,6 +188,7 @@ void Tetno()
 	int value = 0;
 	float valuef = 0;
     int valuePrev=0;
+    int warunekkońca=0;
 
 	while(fgets(line, sizeof(line), file) != NULL)  //czyta plik linia po lini w pętli dopuki plik sie nie skończy 
 	{
@@ -207,7 +208,7 @@ void Tetno()
             else if (value ==99) // warunek końca pliku koniec programu
             {
                 printf("End of the file\n");
-                return;
+                warunekkońca=1;
             }            
         }
 
@@ -243,6 +244,11 @@ void Tetno()
         for (size_t i = 0; i < sizeof(line); i++)
         {
             line[i]= '\000';  //czyści buffor dla następnej lini
+        }
+        
+        if (warunekkońca==1)
+        {
+            return;
         }
         
 	}
