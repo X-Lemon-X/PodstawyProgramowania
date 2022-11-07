@@ -3,8 +3,8 @@
 // odkomentować odpowiednie opcej przed kompilacją programu
 
 //------program tętno------------ 
-#define TESTING_TETNO
-//#define NORMAL_TETNO
+//#define TESTING_TETNO
+#define NORMAL_TETNO
 #define FILEPATH "/home/lemonx/IT/podstawy programowania/laby3/dane3.txt"
 
 
@@ -212,7 +212,7 @@ void Tetno()
         }
 
         #ifdef TESTING_TETNO  //dla testów wypisuje watrtości przeczytane z każdej lini
-            printf("Przeczytana wartość to (float): %f     (int): %d,    lpl: %d -> linia:%s", valuef, value, countLines, line);
+           // printf("Przeczytana wartość to (float): %f     (int): %d,    lpl: %d -> linia:%s", valuef, value, countLines, line);
         #endif
 
         if(countLines == 99)  // co 99 lini powina zosatć obliczone tetno okre t=10s
@@ -221,7 +221,7 @@ void Tetno()
 
 
             #ifdef TESTING_TETNO
-                printf("------------ 99 lini minelo ------------\n");
+                //printf("------------ 99 lini minelo ------------\n");
                 if(puls < 80 && puls > 50) printf("Puls hb %f\n",puls); //sprawdza czy wynik pulsu znjduje się w odpowiednim zakresie 
                 else printf("Puls: %f poza zakresem\n",puls);    //wywitla informacje o pulsie zpoza zakresu
                 printf("Zeros count: %i\n", countZeros);
@@ -232,7 +232,7 @@ void Tetno()
             //sprawdza czy wynik pulsu jest poza zakresem
             //wywitla informacje o pulsie zpoza zakresu
 
-            if(puls > 80 || puls < 50) printf("Puls: %f poza zakresem\n",puls);    
+            if(puls > 80 || puls < 50) printf("Puls: %d poza zakresem\n", (int)puls);    
             
             #endif
             
