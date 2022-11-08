@@ -22,13 +22,13 @@ int czytaj(FILE *plik_we,int obraz_pgm[][MAX],int *wymx,int *wymy, int *szarosci
   int koniec=0;            /* czy napotkano koniec danych w pliku */
   int i,j;
 
-  /*Sprawdzenie czy podano prawid³owy uchwyt pliku */
+  /*Sprawdzenie czy podano prawidï¿½owy uchwyt pliku */
   if (plik_we==NULL) {
     fprintf(stderr,"Blad: Nie podano uchwytu do pliku\n");
     return(0);
   }
 
-  /* Sprawdzenie "numeru magicznego" - powinien byæ P2 */
+  /* Sprawdzenie "numeru magicznego" - powinien byï¿½ P2 */
   if (fgets(buf,DL_LINII,plik_we)==NULL)   /* Wczytanie pierwszej linii pliku do bufora */
     koniec=1;                              /* Nie udalo sie? Koniec danych! */
 
@@ -87,8 +87,11 @@ int main() {
   char nazwa[100];
 
   /* Wczytanie zawartosci wskazanego pliku do pamieci */
-  printf("Podaj nazwe pliku:\n");
-  scanf("%s",nazwa);
+  //printf("Podaj nazwe pliku:\n");
+  //scanf("%s",nazwa);
+  
+  strcpy(nazwa,"/home/lemonx/IT/podstawy programowania/lab4/kubus.pgm");
+  
   plik=fopen(nazwa,"r");
 
   if (plik != NULL) {       /* co spowoduje zakomentowanie tego warunku */
