@@ -3,9 +3,9 @@
 // odkomentować odpowiednie opcej przed kompilacją programu
 
 //------program tętno------------ 
-//#define TESTING_TETNO
-#define NORMAL_TETNO
-#define FILEPATH "/home/lemonx/IT/podstawy programowania/laby3/dane1.txt"
+#define TESTING_TETNO
+//#define NORMAL_TETNO
+#define FILEPATH "C:/Users/patdu/Desktop/IT/pwr/PodstawyProgramowania/laby3/dane1.txt"
 
 
 //---------inne programy---------
@@ -213,7 +213,7 @@ void Tetno()
         }
 
         #ifdef TESTING_TETNO  //dla testów wypisuje watrtości przeczytane z każdej lini
-           // printf("Przeczytana wartość to (float): %f     (int): %d,    lpl: %d -> linia:%s", valuef, value, countLines, line);
+            printf("Przeczytana wartość to (float): %f     (int): %d,    lpl: %d -> linia:%s", valuef, value, countLines, line);
         #endif
 
         if(countLines == 99)  // co 99 lini powina zosatć obliczone tetno okre t=10s

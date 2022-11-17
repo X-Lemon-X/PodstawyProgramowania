@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 
 //#define DEBUG
 
@@ -9,19 +10,24 @@
 #define PATH_SIZE 256
 #define MENU_SIZE 9
 #define MAX_LINE_LENGTH 70
-
 #define PHOTO_FILE_BUFF 1000
+#define DATEBUFFOR 50
+
+#ifdef DEBUG
+  #define PATH_IN "C:/Users/patdu/Desktop/IT/pwr/PodstawyProgramowania/lab4/kubus.pgm"
+  #define PATH_OUT "C:/Users/patdu/Desktop/IT/pwr/PodstawyProgramowania/lab4/kubus2.pgm"
+#endif
 
 // struktura przetrzymująca informacje o zdjęciu
 struct Photo
 {
     int pixels[PHOTO_MAX_SIZE_H][PHOTO_MAX_SIZE_W];
-    unsigned int sizeX;
-    unsigned int sizeY;
+    char comment[PHOTO_FILE_BUFF];
+    unsigned int sizeW;
+    unsigned int sizeH;
     int loaded;
     int maxWhiteValue;
 };
-
 
 struct Menu
 {
@@ -29,17 +35,15 @@ struct Menu
 };
 
 
-// ----------------- przygotowawcze
-
-int DisplayMenu();
-
-//----------------- Funkcje Oeracji na zdjęciach
 int Inverse(struct Photo *);
-int CleanPhoto(struct Photo *photo, int defaultValue);
 int FindEdgeValues(int *min, int *max, struct Photo photo);
 int EdgingPhoto(struct Photo *photoIn, int edge);
-int FixPhotoToUseFullSlcaeValues(struct Photo *photoIn);
+int FixPhotoToUseFullScaleValues(struct Photo *photoIn);
+int Konturowanie(struct Photo *photoIn);
+void AddComment(struct Photo *photo, char *comment);
+void GetDate(char *dateOut);
 
+int DisplayMenu();
 int DisplayPhoto(char pathOut[PATH_SIZE]);
 int LoadPhoto(struct Photo *photo, char path[PATH_SIZE]);
 int SavePhoto(struct Photo *photo, char path[PATH_SIZE]);
@@ -53,7 +57,15 @@ int main()
     int errors=1;
     char pathIn[PATH_SIZE];
     char pathOut[PATH_SIZE];
-    
+
+#ifdef DEBUG
+    LoadPhoto(&photo,);
+    Inverse(&photo);
+    EdgingPhoto(&photo, 200);
+    FixPhotoToUseFullScaleValues(&photo);
+    SavePhoto(&photo,"C:/Users/patdu/Desktop/IT/pwr/PodstawyProgramowania/lab4/kubus2.pgm");
+#else
+
     while (1)
     {
         int option = DisplayMenu();
@@ -75,7 +87,7 @@ int main()
             errors = EdgingPhoto(&photo,edge);
             break;
         case 5:
-            errors = FixPhotoToUseFullSlcaeValues(&photo);
+            errors = FixPhotoToUseFullScaleValues(&photo);
         break;
 
         case 6:
@@ -105,148 +117,136 @@ int main()
         }
         
     }
+#endif
 }
 
+/*
+funkcja wyświetlajca menu (użycie strukrury do trzymania opcji moz e nie jets najlepszym pomysłem ale chciałem to przetestować)
+zczytuje opcje od urzytkownika i wyświetla wybrną opcje 
+*/
 int DisplayMenu()
 {
+  struct Menu menu[MENU_SIZE] ={   
+      {"1 - LoadPhoto"},
+      {"2 - SavePhoto"},
+      {"3 - Inverse"},
+      {"4 - Edging"},
+      {"5 - FixScale"},
+      {"6 - Select input image"},
+      {"7 - Select output image"},
+      {"8 - Show and Save"},
+      {"9 - Close"},
+  };
 
-    struct Menu menu[MENU_SIZE] =
-    {   
-        {"1 - LoadPhoto"},
-        {"2 - SavePhoto"},
-        {"3 - Inverse"},
-        {"4 - Edging"},
-        {"5 - FixScale"},
-        {"6 - Select input image"},
-        {"7 - Select output image"},
-        {"8 - Show and Save"},
-        {"9 - Close"},
-    };
+  printf("\n--------------------[MENU]-----------------------\n");
 
-    printf("\n--------------------[MENU]-----------------------\n");
+  for (size_t i = 0; i < MENU_SIZE; i++)
+    printf("%s\n",menu[i].string);
+  
+  int opcja=0;
+  printf("Wybierz opcję: ");
+  scanf("%i", &opcja);
 
-    for (size_t i = 0; i < MENU_SIZE; i++)
-    {
-        printf("%s\n",menu[i].string);
-    }
-
-    int opcja=0;
-    printf("Wybierz opcję: ");
-    scanf("%i", &opcja);
-
-    if(opcja <= MENU_SIZE && opcja >0)
-    {
-
-        printf("\nwybrałęś: %s \n", menu[--opcja].string);
-        return ++opcja;
-    }
-    else
-        return -1;
+  if(opcja <= MENU_SIZE && opcja >0){
+      printf("\nwybrałęś: %s \n", menu[--opcja].string);
+      return ++opcja;
+  }
+  else
+      return -1;
         
 }
 
 //--------------------------------------------------------------------
 
-int CleanPhoto(struct Photo *photo, int defaultValue)   //CZYŚCI ZAWARTOŚC PIXELI W ZDJĘCIU
-{
-    if(photo->loaded!=0){
-        for (size_t y = 0; y < PHOTO_MAX_SIZE_H; y++)
-            for (size_t x = 0; x < PHOTO_MAX_SIZE_W; x++) photo->pixels[y][x] = defaultValue;    
-        return 1;
-    }
-    else
-        return 0;
-}
-
-int Inverse(struct Photo *photoIn)  // ODWRACA WARTOŚCI PIKSELI  
+/*
+ODWRACA WARTOŚCI PIKSELI  
+przechodzi przez każdy pixel aktualnie załadowany
+i odwraca względem maksymalnej ich warości 
+*/ 
+int Inverse(struct Photo *photoIn)  
 {
     if(photoIn->loaded!=0){
-        for (size_t y = 0; y < photoIn->sizeY; y++)
-            for (size_t x = 0; x < photoIn->sizeX; x++)
-                photoIn->pixels[y][x] = photoIn->maxWhiteValue - photoIn->pixels[y][x];  // przechodzi przez każdy pixel i odwraca wartości 
-        return 1;
+      AddComment(photoIn, "Inverse");
+      for (size_t y = 0; y < photoIn->sizeH; y++)
+          for (size_t x = 0; x < photoIn->sizeW; x++)
+              photoIn->pixels[y][x] = photoIn->maxWhiteValue - photoIn->pixels[y][x];  
+      return 1;         
     }
     else
         return 0;
 }
 
-int FixPhotoToUseFullSlcaeValues(struct Photo *photoIn) // Rozciąganie histogramu
+/*
+Rozciąganie histogramu
+przechodzi przez każdy pixel aktualnie załadowany
+i przeskalowuje wartości za pomocą funkcji aby obraz 
+mógł użyć wszystkich wartosci
+*/ 
+int FixPhotoToUseFullScaleValues(struct Photo *photoIn) // 
 {
     if(photoIn->loaded!=0){
         int max, min;
-        FindEdgeValues(&min, &max, *photoIn);  //wyszukuje najmniejszą i największa wartość
-
-        for (size_t y = 0; y < photoIn->sizeY; y++)
-        {
-            for (size_t x = 0; x < photoIn->sizeX; x++)
-            {
-                /*rozciąga gamę pikseli do maksymalnych i minimalnych wartości*/
-                photoIn->pixels[y][x] = (photoIn->pixels[y][x] - min)* photoIn->maxWhiteValue / (max - min);   
-            }
-        }
+        FindEdgeValues(&min, &max, *photoIn);
+        AddComment(photoIn, "FixPhotoToUseFullScaleValues");
+        for (size_t y = 0; y < photoIn->sizeH; y++)
+            for (size_t x = 0; x < photoIn->sizeW; x++)
+                photoIn->pixels[y][x] = (photoIn->pixels[y][x] - min)* photoIn->maxWhiteValue / (max - min);        
         return 1;
     }
     else
         return 0;
 }
 
-int EdgingPhoto(struct Photo *photoIn, int edge) // Rozciąganie histogramu
+/*
+ustawia wartości min dla pixeli mneijszych od progu
+ustawia wartości max dla pixeli większych od progu
+*/
+int EdgingPhoto(struct Photo *photoIn, int edge)
 {
     if(photoIn->loaded!=0){
-        /*
-        ustawia wartości min dla pixeli mneijszych od progu
-        ustawia wartości max dla pixeli większych od progu
-        */
-
-        for (size_t y = 0; y < photoIn->sizeY; y++)
-        {
-            for (size_t x = 0; x < photoIn->sizeX; x++)
-            {
-                if (photoIn->pixels[y][x] <= edge)
-                {
-                    photoIn->pixels[y][x] = 0;
-                }
-                else    
-                    photoIn->pixels[y][x] = photoIn->maxWhiteValue;   
-            }        
-        }
-        return 1;
+      AddComment(photoIn, "Edging Photo");
+      for (size_t y = 0; y < photoIn->sizeH; y++)
+          for (size_t x = 0; x < photoIn->sizeW; x++){
+              if (photoIn->pixels[y][x] <= edge)
+                  photoIn->pixels[y][x] = 0;
+              else    
+                  photoIn->pixels[y][x] = photoIn->maxWhiteValue;   
+          }        
+      return 1;
     }
     else 
         return 0;
 }
 
-int FindEdgeValues(int *min, int *max, struct Photo photo)  // funkcja wyszukuje wartości najmniejsze i największą
+//wyszukuje wartości najmniejsze i największą
+int FindEdgeValues(int *min, int *max, struct Photo photo)  
 {   
     if(photo.loaded!=0){
-    
         *min = photo.pixels[0][0];
         *max = photo.pixels[0][0];
-
-        for (size_t y = 0; y < photo.sizeY; y++)
-        {
-            for (size_t x = 0; x < photo.sizeX; x++)
-            {
+        for (size_t y = 0; y < photo.sizeH; y++)
+            for (size_t x = 0; x < photo.sizeW; x++){
                 if(photo.pixels[y][x] < *min) *min = photo.pixels[y][x]; 
                 if (photo.pixels[y][x] > *max) *max = photo.pixels[y][x]; 
             }
-        }
         return 1;
     }
     else
         return 0;
 }
 
+//funkcja wyświetlająca obraz za pomocą programu ristrettro
 int DisplayPhoto(char pathIn[PATH_SIZE])
 {
   char command[PHOTO_FILE_BUFF];
-  strcpy(command,"ristretto ");  /* konstrukcja polecenia postaci */
-  strcat(command,pathIn);     /* display "nazwa_pliku" &       */
-  printf("%s\n",command);      /* wydruk kontrolny polecenia */
-  system(command);    
+  strcpy(command,"ristretto ");
+  strcat(command,pathIn);
+  printf("%s\n",command);
+  system(command);
 
 }
 
+//funkcja ładuje zdjęcie do pamięci 
 int LoadPhoto(struct Photo *photo, char path[PATH_SIZE])
 {   
   FILE *plik;
@@ -254,7 +254,7 @@ int LoadPhoto(struct Photo *photo, char path[PATH_SIZE])
   int odczytano=0;
   plik=fopen(path,"r");
 
-  if (plik != NULL) {  //odczytuje zdjęcie  i wpisuje je 
+  if (plik != NULL) { 
     odczytano = read(plik,photo);
     fclose(plik);
   }
@@ -270,6 +270,7 @@ int LoadPhoto(struct Photo *photo, char path[PATH_SIZE])
     return 0;
 }
 
+// funkcja zapisuje zdjecie
 int SavePhoto(struct Photo *photo, char path[PATH_SIZE])
 {
     FILE *plik;
@@ -277,7 +278,7 @@ int SavePhoto(struct Photo *photo, char path[PATH_SIZE])
     int saved=0;
     plik = fopen(path,"w");
 
-  if (plik != NULL) {  //otwiera plik w którym bedzie sapisany 
+  if (plik != NULL) {  //otwiera plik w którym bedzie zapisany 
     saved = save(plik,photo);
     fclose(plik);
   }
@@ -291,6 +292,37 @@ int SavePhoto(struct Photo *photo, char path[PATH_SIZE])
 
 }
 
+/*
+funckja dodająca komnetaz do pliku z data jego dodania
+*/
+void AddComment(struct Photo *photo, char *comment)
+{
+    char buff[DATEBUFFOR];
+    for (size_t i = 0; i < DATEBUFFOR; i++) buff[i]=0;
+    
+    strcat(photo->comment,"# ");
+    strcat(photo->comment,comment);
+    strcat(photo->comment," -> ");
+    GetDate(buff);
+    strcat(photo->comment,buff);
+}
+
+/*
+Funkcja pobiera aktualny czas i zwraca go
+*/
+void GetDate(char *dateOut)
+{
+  struct tm* local;
+  time_t t = time(NULL);
+  local = localtime(&t); 
+  strcat(dateOut,asctime(local));
+}
+
+
+/*
+funkcja wpisuje ustawienia w pliku zdjecia,
+następnie wpisuje do niego wartosci pixeli
+*/
 int save(FILE *plik_we,struct Photo *photo) {
 
   /*Sprawdzenie czy podano prawid�owy uchwyt pliku */
@@ -300,15 +332,13 @@ int save(FILE *plik_we,struct Photo *photo) {
   }
 
   fprintf(plik_we,"P2\n");
-  fprintf(plik_we,"%i %i\n",photo->sizeX,photo->sizeY);
+  fprintf(plik_we,photo->comment);
+  fprintf(plik_we,"%i %i\n",photo->sizeW,photo->sizeH);
   fprintf(plik_we,"%i\n",photo->maxWhiteValue);
-    
   int maxLineSizeCounter = 0;
 
-  for (size_t y = 0; y < photo->sizeY; y++)
-  {
-    for (size_t x = 0; x < photo->sizeX; x++)
-    {
+  for (size_t y = 0; y < photo->sizeH; y++){
+    for (size_t x = 0; x < photo->sizeW; x++){
         if(maxLineSizeCounter > MAX_LINE_LENGTH){
             maxLineSizeCounter =0;
             fprintf(plik_we,"\n");
@@ -318,11 +348,11 @@ int save(FILE *plik_we,struct Photo *photo) {
     }
     fprintf(plik_we,"\n");
   }
-  
-
-
 }
 
+
+//zmodyfikowana funckja odczytu z programu odczyt.c która wpisuje wartości pizeli do struktury ze zdjeciem
+// oraz komentarze 
 int read(FILE *plik_we,struct Photo *photo) {
     
     //int obraz_pgm[][PHOTO_MAX_SIZE_W],int *wymx,int *wymy, int *szarosci
@@ -351,26 +381,27 @@ int read(FILE *plik_we,struct Photo *photo) {
   do {
     if ((znak=fgetc(plik_we))=='#') {         /* Czy linia rozpoczyna sie od znaku '#'? */
       if (fgets(buf,PHOTO_FILE_BUFF,plik_we)==NULL)  /* Przeczytaj ja do bufora                */
-	koniec=1;                   /* Zapamietaj ewentualny koniec danych */
+	      koniec=1;                                   /* Zapamietaj ewentualny koniec danych */
+      strcat(photo->comment,"#");
+      strcat(photo->comment,buf);                
     }  else {
       ungetc(znak,plik_we);                   /* Gdy przeczytany znak z poczatku linii */
     }                                         /* nie jest '#' zwroc go                 */
   } while (znak=='#' && !koniec);   /* Powtarzaj dopoki sa linie komentarza */
                                     /* i nie nastapil koniec danych         */
-
   /* Pobranie wymiarow obrazu i liczby odcieni szarosci */
-  if (fscanf(plik_we,"%d %d %d", &photo->sizeX, &photo->sizeY, &photo->maxWhiteValue)!=3) {
+  if (fscanf(plik_we,"%d %d %d", &photo->sizeW, &photo->sizeH, &photo->maxWhiteValue)!=3) {
     fprintf(stderr,"Blad: Brak wymiarow obrazu lub liczby stopni szarosci\n");
     return(0);
   }
   /* Pobranie obrazu i zapisanie w tablicy pixels*/
-  for (i=0;i<photo->sizeY;i++) {
-    for (j=0;j<photo->sizeX;j++) {
+  for (i=0;i<photo->sizeH;i++) {
+    for (j=0;j<photo->sizeW;j++) {
       if (fscanf(plik_we,"%d",&(photo->pixels[i][j]))!=1) {
 	fprintf(stderr,"Blad: Niewlasciwe wymiary obrazu\n");
 	return(0);
       }
     }
   }
-  return photo->sizeX*photo->sizeY;   /* Czytanie zakonczone sukcesem    */
+  return photo->sizeW*photo->sizeH;   /* Czytanie zakonczone sukcesem    */
 }                   
