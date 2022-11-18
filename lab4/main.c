@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-//#define DEBUG
+#define DEBUG
 
 #define PHOTO_MAX_SIZE_W 400
 #define PHOTO_MAX_SIZE_H 400
@@ -69,6 +69,7 @@ int main()
       int edge;
       printf("\nType edge value\n");
       scanf("%i",&edge);
+      fflush(stdin);
       errors = EdgingPhoto(&photo,edge);
       break;
     case 5:
@@ -78,10 +79,12 @@ int main()
     case 6:
       printf("\nSelect image:");
       scanf("%s",pathIn);
+      fflush(stdin);
     break;
     case 7:
       printf("\nSelect image:");
       scanf("%s",pathOut);
+      fflush(stdin);
     break;
     case 8:
       if(SavePhoto(&photo, pathOut))
@@ -129,7 +132,11 @@ int DisplayMenu()
   
   int opcja=0;
   printf("Wybierz opcję: ");
-  scanf("%i", &opcja);
+  char number[1];
+  scanf("%1s", &number);
+  fflush(stdin);
+
+  opcja =atoi(number);
 
   if(opcja <= MENU_SIZE && opcja >0){
       printf("\nwybrałęś: %s \n", menu[--opcja].string);
@@ -270,8 +277,10 @@ int SavePhoto(struct Photo *photo, char path[PATH_SIZE])
   else  
     printf("Specify the output file first.\n");
 
-  if(saved != 0)
+  if(saved != 0){
+    printf("Saved\n");
     return 1;
+  }
   else
     return 0;
 
@@ -400,7 +409,7 @@ int read(FILE *plik_we,struct Photo *photo) {
 sprawdza czy wyjście z funkcji testowanej jest zgodne z założeniem testu jeśli tak to pozytywnie jeśli nie to negatywne
 */
 void TestInfo(int index,int testresult,int expecResult ){
-  printf("------------------------>[");
+  printf("------------------------------------>[");
   printf("%i",index);
   printf("] ");
   if(testresult == expecResult) printf("Test [Positive]\n");
@@ -444,7 +453,7 @@ int TestPliku(int edge,char *pathIn,char *extension){
 }
 
 int Testy(){
-  printf("-------------[TESTS]-----------");
+  printf("[comunicats]------------------------------[TEST RESULTS]-----------\n");
   TestInfo(1,TestPliku(100,"kubus",".pgm"),0);   // test gdy wszystko jest w normie
   TestInfo(2,TestPliku(5000,"kubus",".pgm"),0);  //test gdy damy zadyży parametr do edge
   TestInfo(3,TestPliku(-2389,"kubus",".pgm"),0);  //test gdy damy ujemy parametr do edge nie jest on co prawda sprawdzaany przz test jednak funkcja  EdgingPhoto i tak używa wartosci bezwzględnej
@@ -452,6 +461,7 @@ int Testy(){
   TestInfo(5,TestPliku(100,"kubusWidthWrong",".pgm"),0);  //przy złej wartości szerokości obrazu w pliku 
   TestInfo(6,TestPliku(100,"testTx",".txt"),1); //gdy podamy plik bez rozszerzenia  .pgm
   TestInfo(7,TestPliku(-1,"kubusWhieWalue",".pgm"),0); // dla duzej wartości maxWhitevalue
+  TestInfo(8,TestPliku(-1,"NBY^& N&*",""),1); // dla duzej wartości maxWhitevalue
 }
 
 int main(){Testy();}
