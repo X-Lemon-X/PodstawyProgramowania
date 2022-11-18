@@ -13,11 +13,6 @@
 #define PHOTO_FILE_BUFF 1000
 #define DATEBUFFOR 50
 
-#ifdef DEBUG
-  #define PATH_IN "C:/Users/patdu/Desktop/IT/pwr/PodstawyProgramowania/lab4/kubus.pgm"
-  #define PATH_OUT "C:/Users/patdu/Desktop/IT/pwr/PodstawyProgramowania/lab4/kubus2.pgm"
-#endif
-
 // struktura przetrzymująca informacje o zdjęciu
 struct Photo
 {
@@ -34,7 +29,6 @@ struct Menu
     char *string;
 };
 
-
 int Inverse(struct Photo *);
 int FindEdgeValues(int *min, int *max, struct Photo photo);
 int EdgingPhoto(struct Photo *photoIn, int edge);
@@ -50,75 +44,65 @@ int SavePhoto(struct Photo *photo, char path[PATH_SIZE]);
 int read(FILE *plik_we, struct Photo *photo);
 int save(FILE *plik_we, struct Photo *photo);
 
-
+#ifndef DEBUG
 int main()
 {
-    struct Photo photo = {photo.loaded=0};
-    int errors=1;
-    char pathIn[PATH_SIZE];
-    char pathOut[PATH_SIZE];
-
-#ifdef DEBUG
-    LoadPhoto(&photo,);
-    Inverse(&photo);
-    EdgingPhoto(&photo, 200);
-    FixPhotoToUseFullScaleValues(&photo);
-    SavePhoto(&photo,"C:/Users/patdu/Desktop/IT/pwr/PodstawyProgramowania/lab4/kubus2.pgm");
-#else
-
-    while (1)
+  struct Photo photo = {photo.loaded=0};
+  int errors=1;
+  char pathIn[PATH_SIZE];
+  char pathOut[PATH_SIZE];
+  while (1)
+  {
+    int option = DisplayMenu();
+    switch (option)
     {
-        int option = DisplayMenu();
-        switch (option)
-        {
-        case 1:
-            LoadPhoto(&photo,pathIn);  
-            break;
-        case 2:
-            SavePhoto(&photo,pathOut);
-            break;
-        case 3:
-            errors =Inverse(&photo);
-            break;
-        case 4:
-            int edge;
-            printf("\nType edge value\n");
-            scanf("%i",&edge);
-            errors = EdgingPhoto(&photo,edge);
-            break;
-        case 5:
-            errors = FixPhotoToUseFullScaleValues(&photo);
-        break;
+    case 1:
+      LoadPhoto(&photo,pathIn);  
+      break;
+    case 2:
+      SavePhoto(&photo,pathOut);
+      break;
+    case 3:
+      errors =Inverse(&photo);
+      break;
+    case 4:
+      int edge;
+      printf("\nType edge value\n");
+      scanf("%i",&edge);
+      errors = EdgingPhoto(&photo,edge);
+      break;
+    case 5:
+      errors = FixPhotoToUseFullScaleValues(&photo);
+    break;
 
-        case 6:
-            printf("\nSelect image:");
-            scanf("%s",pathIn);
-        break;
-        case 7:
-            printf("\nSelect image:");
-            scanf("%s",pathOut);
-        break;
-        case 8:
-            if(SavePhoto(&photo, pathOut))
-                DisplayPhoto(pathOut);
-        break;
-        case 9:
-            printf("\nExiting program...\n");
-            return;
-        break;
-        default:
-            printf("\nZła obcja\n");
-            break;
-        }
-
-        if (errors == 0){  //1
-            printf("\nPhoto not loaded!\n");
-            errors =1;
-        }
-        
+    case 6:
+      printf("\nSelect image:");
+      scanf("%s",pathIn);
+    break;
+    case 7:
+      printf("\nSelect image:");
+      scanf("%s",pathOut);
+    break;
+    case 8:
+      if(SavePhoto(&photo, pathOut))
+          DisplayPhoto(pathOut);
+    break;
+    case 9:
+      printf("\nExiting program...\n");
+      return;
+    break;
+    default:
+      printf("\nZła obcja\n");
+      break;
     }
-#endif
+
+    if (errors == 0){  //1
+      printf("\nPhoto not loaded!\n");
+      errors =1;
+    }
+  }
 }
+#endif
 
 /*
 funkcja wyświetlajca menu (użycie strukrury do trzymania opcji moz e nie jets najlepszym pomysłem ale chciałem to przetestować)
@@ -156,8 +140,6 @@ int DisplayMenu()
         
 }
 
-//--------------------------------------------------------------------
-
 /*
 ODWRACA WARTOŚCI PIKSELI  
 przechodzi przez każdy pixel aktualnie załadowany
@@ -190,7 +172,8 @@ int FixPhotoToUseFullScaleValues(struct Photo *photoIn) //
         AddComment(photoIn, "FixPhotoToUseFullScaleValues");
         for (size_t y = 0; y < photoIn->sizeH; y++)
             for (size_t x = 0; x < photoIn->sizeW; x++)
-                photoIn->pixels[y][x] = (photoIn->pixels[y][x] - min)* photoIn->maxWhiteValue / (max - min);        
+              if((max - min)) photoIn->pixels[y][x] = (photoIn->pixels[y][x] - min)* photoIn->maxWhiteValue / (max - min);       
+              else  photoIn->pixels[y][x] = 0;
         return 1;
     }
     else
@@ -205,6 +188,8 @@ int EdgingPhoto(struct Photo *photoIn, int edge)
 {
     if(photoIn->loaded!=0){
       AddComment(photoIn, "Edging Photo");
+      edge = abs(edge);
+      if(edge > photoIn->maxWhiteValue) edge = photoIn->maxWhiteValue;
       for (size_t y = 0; y < photoIn->sizeH; y++)
           for (size_t x = 0; x < photoIn->sizeW; x++){
               if (photoIn->pixels[y][x] <= edge)
@@ -405,3 +390,70 @@ int read(FILE *plik_we,struct Photo *photo) {
   }
   return photo->sizeW*photo->sizeH;   /* Czytanie zakonczone sukcesem    */
 }                   
+
+
+
+#ifdef DEBUG
+#define TESTFILESPATH "C:/Users/patdu/Desktop/IT/pwr/PodstawyProgramowania/lab4/Tests/"
+
+/*
+sprawdza czy wyjście z funkcji testowanej jest zgodne z założeniem testu jeśli tak to pozytywnie jeśli nie to negatywne
+*/
+void TestInfo(int index,int testresult,int expecResult ){
+  printf("------------------------>[");
+  printf("%i",index);
+  printf("] ");
+  if(testresult == expecResult) printf("Test [Positive]\n");
+  else printf("Test [Failed]\n");
+}
+
+/*
+sprawdza każdą funkcję przy odpowiednim pliku testowym jeśli jakaś wyżuci bład to otrzumijemy błed jeśli wszusytki przejdą poprawnie to otrzymujemy poozytym
+*/
+int TestPliku(int edge,char *pathIn,char *extension){
+  struct Photo photo = {photo.loaded=0, photo.sizeH=0, photo.sizeW=0,photo.maxWhiteValue=0};
+
+  for (size_t i = 0; i < PHOTO_MAX_SIZE_W; i++) 
+    for (size_t p = 0; p < PHOTO_MAX_SIZE_H; p++)
+      photo.pixels[p][i] = 0;
+
+  for (size_t i = 0; i < PHOTO_FILE_BUFF; i++) photo.comment[i]=0;
+  
+  int errors[5];
+  char bufforIn[PATH_SIZE];
+  char bufforOut[PATH_SIZE];
+
+  strcpy(bufforIn,TESTFILESPATH);
+  strcat(bufforIn,pathIn);
+  strcat(bufforIn,extension);
+  
+  strcpy(bufforOut,TESTFILESPATH);
+  strcat(bufforOut,pathIn);
+  strcat(bufforOut,"_out.pgm");
+
+  errors[0]= LoadPhoto(&photo,bufforIn);
+  errors[1]= Inverse(&photo);
+  if(edge>=0)
+    errors[2]= EdgingPhoto(&photo, edge);
+  else 
+    errors[2]=1;
+  errors[3]= FixPhotoToUseFullScaleValues(&photo);
+  errors[4]= SavePhoto(&photo,bufforOut);
+  for (size_t i = 0; i < 5; i++) if(errors[i] == 0) return 1;
+  return 0;
+}
+
+int Testy(){
+  printf("-------------[TESTS]-----------");
+  TestInfo(1,TestPliku(100,"kubus",".pgm"),0);   // test gdy wszystko jest w normie
+  TestInfo(2,TestPliku(5000,"kubus",".pgm"),0);  //test gdy damy zadyży parametr do edge
+  TestInfo(3,TestPliku(-2389,"kubus",".pgm"),0);  //test gdy damy ujemy parametr do edge nie jest on co prawda sprawdzaany przz test jednak funkcja  EdgingPhoto i tak używa wartosci bezwzględnej
+  TestInfo(4,TestPliku(100,"kubusP3",".pgm"),1);  //gdy plik nie zawiera P2 a np. P3
+  TestInfo(5,TestPliku(100,"kubusWidthWrong",".pgm"),0);  //przy złej wartości szerokości obrazu w pliku 
+  TestInfo(6,TestPliku(100,"testTx",".txt"),1); //gdy podamy plik bez rozszerzenia  .pgm
+  TestInfo(7,TestPliku(-1,"kubusWhieWalue",".pgm"),0); // dla duzej wartości maxWhitevalue
+}
+
+int main(){Testy();}
+#endif
+
