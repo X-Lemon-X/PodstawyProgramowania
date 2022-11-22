@@ -5,8 +5,8 @@
 
 #define DEBUG
 
-#define PHOTO_MAX_SIZE_W 400
-#define PHOTO_MAX_SIZE_H 400
+#define PHOTO_MAX_SIZE_W 10
+#define PHOTO_MAX_SIZE_H 10
 #define PATH_SIZE 256
 #define MENU_SIZE 9
 #define MAX_LINE_LENGTH 70
@@ -403,7 +403,7 @@ int read(FILE *plik_we,struct Photo *photo) {
 
 
 #ifdef DEBUG
-#define TESTFILESPATH "C:/Users/patdu/Desktop/IT/pwr/PodstawyProgramowania/lab4/Tests/"
+#define TESTFILESPATH "C:/Users/patdu/Desktop/IT/PodstawyProgramowania/lab4/Tests/"
 
 /*
 sprawdza czy wyjście z funkcji testowanej jest zgodne z założeniem testu jeśli tak to pozytywnie jeśli nie to negatywne
