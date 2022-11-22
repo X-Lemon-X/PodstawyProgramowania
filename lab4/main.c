@@ -5,8 +5,8 @@
 
 #define DEBUG
 
-#define PHOTO_MAX_SIZE_W 10
-#define PHOTO_MAX_SIZE_H 10
+#define PHOTO_MAX_SIZE_W 500
+#define PHOTO_MAX_SIZE_H 500
 #define PATH_SIZE 256
 #define MENU_SIZE 9
 #define MAX_LINE_LENGTH 70
@@ -265,9 +265,9 @@ int LoadPhoto(struct Photo *photo, char path[PATH_SIZE])
 // funkcja zapisuje zdjecie
 int SavePhoto(struct Photo *photo, char path[PATH_SIZE])
 {
+  int saved=0;
+  if(photo->loaded){
     FILE *plik;
-
-    int saved=0;
     plik = fopen(path,"w");
 
   if (plik != NULL) {  //otwiera plik w którym bedzie zapisany 
@@ -276,6 +276,7 @@ int SavePhoto(struct Photo *photo, char path[PATH_SIZE])
   }
   else  
     printf("Specify the output file first.\n");
+  }
 
   if(saved != 0){
     printf("Saved\n");
@@ -403,7 +404,8 @@ int read(FILE *plik_we,struct Photo *photo) {
 
 
 #ifdef DEBUG
-#define TESTFILESPATH "C:/Users/patdu/Desktop/IT/PodstawyProgramowania/lab4/Tests/"
+//#define TESTFILESPATH "C:/Users/patdu/Desktop/IT/PodstawyProgramowania/lab4/Tests/"
+#define TESTFILESPATH "/home/lemonx/IT/podstawyProgramowania/lab4/Tests/"
 
 /*
 sprawdza czy wyjście z funkcji testowanej jest zgodne z założeniem testu jeśli tak to pozytywnie jeśli nie to negatywne
@@ -453,6 +455,7 @@ int TestPliku(int edge,char *pathIn,char *extension){
 }
 
 int Testy(){
+  // testy są pozytywne dla 0 i negatywne dla 1 <- jest to też oczekiwany rezultat testu mówiący o oczekiwany rezultacie
   printf("[comunicats]------------------------------[TEST RESULTS]-----------\n");
   TestInfo(1,TestPliku(100,"kubus",".pgm"),0);   // test gdy wszystko jest w normie
   TestInfo(2,TestPliku(5000,"kubus",".pgm"),0);  //test gdy damy zadyży parametr do edge
@@ -461,7 +464,10 @@ int Testy(){
   TestInfo(5,TestPliku(100,"kubusWidthWrong",".pgm"),0);  //przy złej wartości szerokości obrazu w pliku 
   TestInfo(6,TestPliku(100,"testTx",".txt"),1); //gdy podamy plik bez rozszerzenia  .pgm
   TestInfo(7,TestPliku(-1,"kubusWhieWalue",".pgm"),0); // dla duzej wartości maxWhitevalue
-  TestInfo(8,TestPliku(-1,"NBY^& N&*",""),1); // dla duzej wartości maxWhitevalue
+  TestInfo(8,TestPliku(-1,"NBY^& N&*",""),1); // dla nie istniejącego pliku
+  TestInfo(9,TestPliku(-1,"kubusLongCommecnt",".pgm"),1); // dla za długiego komentażu w obrazie
+  TestInfo(10,TestPliku(-1,"kubusSize1000",".pgm"),1); // dla za długiego komentażu w obrazie
+  TestInfo(11,TestPliku(-1,"kubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copy",".pgm"),0);//kubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copy
 }
 
 int main(){Testy();}
