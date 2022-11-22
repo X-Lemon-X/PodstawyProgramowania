@@ -7,7 +7,7 @@
 
 #define PHOTO_MAX_SIZE_W 500
 #define PHOTO_MAX_SIZE_H 500
-#define PATH_SIZE 256
+#define PATH_SIZE 200
 #define MENU_SIZE 9
 #define MAX_LINE_LENGTH 70
 #define PHOTO_FILE_BUFF 1000
@@ -404,8 +404,8 @@ int read(FILE *plik_we,struct Photo *photo) {
 
 
 #ifdef DEBUG
-//#define TESTFILESPATH "C:/Users/patdu/Desktop/IT/PodstawyProgramowania/lab4/Tests/"
-#define TESTFILESPATH "/home/lemonx/IT/podstawyProgramowania/lab4/Tests/"
+#define TESTFILESPATH "C:/Users/patdu/Desktop/IT/PodstawyProgramowania/lab4/Tests/"
+//#define TESTFILESPATH "/home/lemonx/IT/podstawyProgramowania/lab4/Tests/"
 
 /*
 sprawdza czy wyjście z funkcji testowanej jest zgodne z założeniem testu jeśli tak to pozytywnie jeśli nie to negatywne
@@ -414,8 +414,8 @@ void TestInfo(int index,int testresult,int expecResult ){
   printf("------------------------------------>[");
   printf("%i",index);
   printf("] ");
-  if(testresult == expecResult) printf("Test [Positive]\n");
-  else printf("Test [Failed]\n");
+  if(testresult == expecResult) printf("Test [Positive][%i]\n",testresult);
+  else printf("Test [Failed][%i]\n",testresult);
 }
 
 /*
@@ -450,7 +450,12 @@ int TestPliku(int edge,char *pathIn,char *extension){
     errors[2]=1;
   errors[3]= FixPhotoToUseFullScaleValues(&photo);
   errors[4]= SavePhoto(&photo,bufforOut);
-  for (size_t i = 0; i < 5; i++) if(errors[i] == 0) return 1;
+  int errorCount =0;
+  for (size_t i = 0; i < 5; i++) 
+    if(errors[i] == 0)
+      errorCount++;
+  if(errorCount!=0)
+    return errorCount;
   return 0;
 }
 
@@ -460,14 +465,14 @@ int Testy(){
   TestInfo(1,TestPliku(100,"kubus",".pgm"),0);   // test gdy wszystko jest w normie
   TestInfo(2,TestPliku(5000,"kubus",".pgm"),0);  //test gdy damy zadyży parametr do edge
   TestInfo(3,TestPliku(-2389,"kubus",".pgm"),0);  //test gdy damy ujemy parametr do edge nie jest on co prawda sprawdzaany przz test jednak funkcja  EdgingPhoto i tak używa wartosci bezwzględnej
-  TestInfo(4,TestPliku(100,"kubusP3",".pgm"),1);  //gdy plik nie zawiera P2 a np. P3
+  TestInfo(4,TestPliku(100,"kubusP3",".pgm"),5);  //gdy plik nie zawiera P2 a np. P3
   TestInfo(5,TestPliku(100,"kubusWidthWrong",".pgm"),0);  //przy złej wartości szerokości obrazu w pliku 
-  TestInfo(6,TestPliku(100,"testTx",".txt"),1); //gdy podamy plik bez rozszerzenia  .pgm
+  TestInfo(6,TestPliku(100,"testTx",".txt"),5); //gdy podamy plik bez rozszerzenia  .pgm
   TestInfo(7,TestPliku(-1,"kubusWhieWalue",".pgm"),0); // dla duzej wartości maxWhitevalue
-  TestInfo(8,TestPliku(-1,"NBY^& N&*",""),1); // dla nie istniejącego pliku
-  TestInfo(9,TestPliku(-1,"kubusLongCommecnt",".pgm"),1); // dla za długiego komentażu w obrazie
-  TestInfo(10,TestPliku(-1,"kubusSize1000",".pgm"),1); // dla za długiego komentażu w obrazie
-  TestInfo(11,TestPliku(-1,"kubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copy",".pgm"),0);//kubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copy
+  TestInfo(8,TestPliku(-1,"NBY^& N&*",""),4); // dla nie istniejącego pliku
+  TestInfo(9,TestPliku(-1,"kubusLongCommecnt",".pgm"),4); // dla za długiego komentażu w obrazie
+  TestInfo(10,TestPliku(-1,"kubusSize1000",".pgm"),4); // dla za dużych wymiarów obrazu
+  TestInfo(11,TestPliku(-1,"kubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copy",".pgm"),4);//kubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copykubus copy
 }
 
 int main(){Testy();}
