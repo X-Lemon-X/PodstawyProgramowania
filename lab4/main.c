@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define DEBUG
+//#define DEBUG
 
 #define PHOTO_MAX_SIZE_W 500
 #define PHOTO_MAX_SIZE_H 500
@@ -14,8 +14,7 @@
 #define DATEBUFFOR 50
 
 // struktura przetrzymująca informacje o zdjęciu
-struct Photo
-{
+struct Photo{
     int pixels[PHOTO_MAX_SIZE_H][PHOTO_MAX_SIZE_W];
     char comment[PHOTO_FILE_BUFF];
     unsigned int sizeW;
@@ -24,8 +23,8 @@ struct Photo
     int maxWhiteValue;
 };
 
-struct Menu
-{
+//
+struct Menu{
     char *string;
 };
 
