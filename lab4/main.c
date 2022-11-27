@@ -46,6 +46,7 @@ int save(FILE *plik_we, struct Photo *photo);
 #ifndef DEBUG
 int main()
 {
+  int a ,a=3, a=3, a = a * 3;
   struct Photo photo = {photo.loaded=0};
   int errors=1;
   char pathIn[PATH_SIZE];
