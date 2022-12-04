@@ -13,13 +13,16 @@ if [ $argc -ne 2 ]; then  # [ ] - alternatywny sposob wywolywania polecenia test
     exit 1
 fi
 
-# dopoki nie ma uzytkownika usypiaj
-while test `who |grep $1 |wc -l` -eq 0; do sleep 2; done
+#jeśli użytownika nie ma wyłącza skrypt bo i tak zostanie wywołany za jakiś ustalonuy czas
+if [ `who |grep -sw $1 |wc -l` -eq 0 ];
+then 
+    exit 1
+fi
 
 # uzytkownik pojawil sie - poinformuj
 tempFolder=$"Email_Login".$(date +%H).$(date +%M).$(date +%S) 
 
-while [ -ne %tempFolder ];
+while [ -e "$tempFolder" ];
 do
     tempFolder=$"Email".$(date +%H).$(date +%M).$(date +%S)
     sleep 1s
@@ -28,7 +31,7 @@ touch $tempFolder
 
 #e-mail z którego będzie wysyłał oczywścei żeby ten skryot działą musi być skonfigorowany /etc/ssmtp/ssmtp.conf i zainstalowany ssmtp  
 echo "From: vbmech1234@outlook.com" >> $tempFolder
-echo "Subject: zalogowal=$1 " >> $tempFolder
+echo "Subject: zalogowany=$1 " >> $tempFolder
 
 ssmtp -v $2 < $tempFolder  #wysyła e-maila 
 
