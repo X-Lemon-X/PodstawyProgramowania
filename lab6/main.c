@@ -41,8 +41,20 @@ int fun(struct Img *img)
 
 int main()
 {
-  struct Img img;
-  fun(&img);
+  Image Img;
+
+  int z,y;
+  z=5;
+  y=6;
+  int (*tab)[z];
+  
+  
+  tab = (int(*)[z])malloc(y * z * sizeof(int));
+  tab[1][2]=3;
+  tab[1][1]=2;
+  printf("kon %i\n", tab[1][1]);
+  printf("kon %i\n", tab[1][2]);
+
 }
 
 
