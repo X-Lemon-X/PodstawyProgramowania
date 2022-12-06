@@ -18,23 +18,20 @@
 void GetDate(char *dateOut);
 
 int DisplayPhoto(char pathOut[PATH_SIZE]);
-int LoadPhoto(struct Photo *photo, char path[PATH_SIZE]);
-int SavePhoto(struct Photo *photo, char path[PATH_SIZE]);
-int read(FILE *plik_we, struct Photo *photo);
-int save(FILE *plik_we, struct Photo *photo);
 
-struct Img{int data;};
 
 #ifndef DEBUG
-int fun(struct Img *img)
+int fun()
 {
-  img->data =1;
-  printf("->  %i\n",img->data );
-  printf("->  %lo\n", &img->data);
+  Image img;
+  LoadImage(&img, "kostka.png",NULL);
+  SaveImage_as_png(img);
 
-  *(&(img->data)) = 4;
+  char *buf1 = (char*)malloc(20);
+  char *buf = (char*)malloc(sizeof(buf1));
 
-  printf("->  %i\n", img->data);
+  printf("->  %i\n", sizeof(buf1));
+  printf("->  %i\n", sizeof(buf));
 
 
 }
@@ -54,6 +51,8 @@ int main()
   tab[1][1]=2;
   printf("kon %i\n", tab[1][1]);
   printf("kon %i\n", tab[1][2]);
+
+  fun();
 
 }
 
