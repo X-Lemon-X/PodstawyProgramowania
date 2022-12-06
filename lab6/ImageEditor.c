@@ -5,20 +5,33 @@
 
 #include "ImageEditor.h"
 
+#include <time.h>
 
 
-#define PATH_SIZE 400
-#define PHOTO_FILE_BUFF 1000
+#define PHOTO_MAX_SIZE_W 500
+#define PHOTO_MAX_SIZE_H 500
+#define PATH_SIZE 200
+#define MENU_SIZE 9
+#define MAX_LINE_LENGTH 70
 
-void LoadImage(struct Image *photo, int *pixelsInTheFoto, int sizeW, int sizeH, int maxWhileValue, char *comments)
-{
-    photo->pixels = pixelsInTheFoto;
-    photo->sizeH = sizeH;
-    photo->sizeW = sizeW;
-    photo->maxWhiteValue = maxWhileValue;
-}
+#define DATEBUFFOR 50
 
-int InverseImage(struct Image *photoIn)  
+// struktura przetrzymująca informacje o zdjęciu
+
+
+void AddComment(struct Photo *photo, char *comment);
+void GetDate(char *dateOut);
+int read(FILE *plik_we, struct Photo *photo);
+int save(FILE *plik_we, struct Photo *photo);
+
+
+
+/*
+ODWRACA WARTOŚCI PIKSELI  
+przechodzi przez każdy pixel aktualnie załadowany
+i odwraca względem maksymalnej ich warości 
+*/ 
+int Inverse(struct Photo *photoIn)  
 {
     if(photoIn->loaded!=0){
       AddComment(photoIn, "Inverse");
@@ -37,7 +50,7 @@ przechodzi przez każdy pixel aktualnie załadowany
 i przeskalowuje wartości za pomocą funkcji aby obraz 
 mógł użyć wszystkich wartosci
 */ 
-int FixImageToUseFullScaleValues(struct Image *photoIn) // 
+int FixPhotoToUseFullScaleValues(struct Photo *photoIn) // 
 {
     if(photoIn->loaded!=0){
         int max, min;
@@ -57,10 +70,10 @@ int FixImageToUseFullScaleValues(struct Image *photoIn) //
 ustawia wartości min dla pixeli mneijszych od progu
 ustawia wartości max dla pixeli większych od progu
 */
-int EdgingImage(struct Image *photoIn, int edge)
+int EdgingPhoto(struct Photo *photoIn, int edge)
 {
     if(photoIn->loaded!=0){
-      AddComment(photoIn, "Edging Image");
+      AddComment(photoIn, "Edging Photo");
       edge = abs(edge);
       if(edge > photoIn->maxWhiteValue) edge = photoIn->maxWhiteValue;
       for (size_t y = 0; y < photoIn->sizeH; y++)
@@ -77,7 +90,7 @@ int EdgingImage(struct Image *photoIn, int edge)
 }
 
 //wyszukuje wartości najmniejsze i największą
-int FindEdgeValuesImage(int *min, int *max, struct Image photo)  
+int FindEdgeValues(int *min, int *max, struct Photo photo)  
 {   
     if(photo.loaded!=0){
         *min = photo.pixels[0][0];
@@ -93,25 +106,22 @@ int FindEdgeValuesImage(int *min, int *max, struct Image photo)
         return 0;
 }
 
-/*
-funckja dodająca komnetaz do pliku z data jego dodania
-*/
-void AddComment(struct Image *photo, char *comment)
+//funkcja wyświetlająca obraz za pomocą programu ristrettro
+int DisplayPhoto(char pathIn[PATH_SIZE])
 {
-    char buff[DATEBUFFOR];
-    for (size_t i = 0; i < DATEBUFFOR; i++) buff[i]=0;
-    
-    strcat(photo->comment,"# ");
-    strcat(photo->comment,comment);
-    strcat(photo->comment," -> ");
-    GetDate(buff);
-    strcat(photo->comment,buff);
+  char command[PHOTO_FILE_BUFF];
+  strcpy(command,"ristretto ");
+  strcat(command,pathIn);
+  printf("%s\n",command);
+  system(command);
+
 }
 
-
-int LoadImage(struct Image *photo, char *path)
+//funkcja ładuje zdjęcie do pamięci 
+int LoadPhoto(struct Photo *photo, char path[PATH_SIZE])
 {   
   FILE *plik;
+
   int odczytano=0;
   plik=fopen(path,"r");
 
@@ -120,18 +130,19 @@ int LoadImage(struct Image *photo, char *path)
     fclose(plik);
   }
   else  
-    return -2;
+    printf("Error: Specify the input file first.\n");
 
   if(odczytano != 0){
     photo->loaded=1;
-    return 0;
+    printf("Loaded\n");
+    return 1;
   }
   else
-    return -1;
+    return 0;
 }
 
 // funkcja zapisuje zdjecie
-int SaveImage(struct Image *photo, char *path)
+int SavePhoto(struct Photo *photo, char path[PATH_SIZE])
 {
   int saved=0;
   if(photo->loaded){
@@ -142,20 +153,27 @@ int SaveImage(struct Image *photo, char *path)
     saved = save(plik,photo);
     fclose(plik);
   }
-  else return -2;
+  else  
+    printf("Specify the output file first.\n");
   }
 
-  if(saved != 0)return 0;
-  else return -1;
+  if(saved != 0){
+    printf("Saved\n");
+    return 1;
+  }
+  else
+    return 0;
 
 }
 
 /*
 funckja dodająca komnetaz do pliku z data jego dodania
 */
-void AddComment(struct Image *photo, char *comment)
+void AddComment(struct Photo *photo, char *comment)
 {
-    char *buff; 
+    char buff[DATEBUFFOR];
+    for (size_t i = 0; i < DATEBUFFOR; i++) buff[i]=0;
+    
     strcat(photo->comment,"# ");
     strcat(photo->comment,comment);
     strcat(photo->comment," -> ");
@@ -179,7 +197,7 @@ void GetDate(char *dateOut)
 funkcja wpisuje ustawienia w pliku zdjecia,
 następnie wpisuje do niego wartosci pixeli
 */
-int save(FILE *plik_we,struct Image *photo) {
+int save(FILE *plik_we,struct Photo *photo) {
 
   /*Sprawdzenie czy podano prawid�owy uchwyt pliku */
   if (plik_we==NULL) {
@@ -209,7 +227,7 @@ int save(FILE *plik_we,struct Image *photo) {
 
 //zmodyfikowana funckja odczytu z programu odczyt.c która wpisuje wartości pizeli do struktury ze zdjeciem
 // oraz komentarze 
-int read(FILE *plik_we,struct Image *photo) {
+int read(FILE *plik_we,struct Photo *photo) {
     
     //int obraz_pgm[][PHOTO_MAX_SIZE_W],int *wymx,int *wymy, int *szarosci
 
@@ -261,5 +279,3 @@ int read(FILE *plik_we,struct Image *photo) {
   }
   return photo->sizeW*photo->sizeH;   /* Czytanie zakonczone sukcesem    */
 }                   
-
-

@@ -9,6 +9,10 @@ int main(int agr, char *args[]){
 
     }
 
+    int aco = ((int)0.1*17);
+    printf("%i\n",aco);
+
+
 
     int a=5, j=10;
 
