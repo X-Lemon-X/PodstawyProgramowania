@@ -22,7 +22,6 @@ int Inverse(struct Photo *);
 int FindEdgeValues(int *min, int *max, struct Photo photo);
 int EdgingPhoto(struct Photo *photoIn, int edge);
 int FixPhotoToUseFullScaleValues(struct Photo *photoIn);
-int DisplayPhoto(char pathOut[PATH_SIZE]);
 int LoadPhoto(struct Photo *photo, char path[PATH_SIZE]);
 int SavePhoto(struct Photo *photo, char path[PATH_SIZE]);
 #endif

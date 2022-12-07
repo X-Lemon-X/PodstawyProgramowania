@@ -106,17 +106,6 @@ int FindEdgeValues(int *min, int *max, struct Photo photo)
         return 0;
 }
 
-//funkcja wyświetlająca obraz za pomocą programu ristrettro
-int DisplayPhoto(char pathIn[PATH_SIZE])
-{
-  char command[PHOTO_FILE_BUFF];
-  strcpy(command,"ristretto ");
-  strcat(command,pathIn);
-  printf("%s\n",command);
-  system(command);
-
-}
-
 //funkcja ładuje zdjęcie do pamięci 
 int LoadPhoto(struct Photo *photo, char path[PATH_SIZE])
 {   
