@@ -1,13 +1,19 @@
-
-
 #ifndef IMAGEEDITORPLUS_H
 #define IMAGEEDITORPLUS_H
+
+
+#ifndef STBI_NO_STDIO
+#include <stdio.h>
+#endif // STBI_NO_STDIO
+
 
 typedef struct {
     unsigned char *img;
     int width, height, channels, loaded;
-    size_t sizeIn, sizeOut;
+    size_t sizeIn, sizeOut, imageSize;
     char *inPath, *outPath;
+    FILE *in;
+    FILE *out;
 
 } Image;
 
