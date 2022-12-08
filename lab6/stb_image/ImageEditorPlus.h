@@ -1,4 +1,6 @@
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #ifndef IMAGEEDITORPLUS_H
 #define IMAGEEDITORPLUS_H
@@ -9,7 +11,8 @@
 #define IMAGENOTLOADED -1
 #define FILEEXTENSIONNOTSUPPORTED -2
 #define NOINPUTFILE -3
-#define ERROR_IMAGETYPE -7
+#define ERROR_IMAGETYPE -4
+#define ERROR_IMAGE_DIDNT_SAVE -5
 
 #define OK 0
 
@@ -29,7 +32,7 @@
  *  green = *(p + 2)
  * 
  * wartosć pixeli są w granicy 0..255
- * obrazy pgm i pmm są więć żutowane z ich rozdzielczości na  0..255
+ * obrazy pgm i pmm są więć żutowane z ich rozdzielczości pixeli na  0..255
  * obrazy typu ppm i pgm są możliwe do odczytu tylko w ich formie binarnej forma ASCI nie jest obsługiwany  
  * 
  *  Obsługiwane formaty:

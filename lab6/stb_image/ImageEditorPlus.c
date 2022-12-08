@@ -1,16 +1,10 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
-
 #include "ImageEditorPlus.h"
 
-#define STBI_NO_STDIO
+//#define STBI_NO_STDIO
 
 #define DEFAULT_IMAGE_OUTPUT_FILE_NAME_PNG "out.png"
 #define DEFAULT_IMAGE_OUTPUT_FILE_NAME_JPG "out.jpg"
@@ -19,6 +13,7 @@
 #define true 1
 #define false 0
 
+typedef unsigned char uint8_t;
 
 int SaveImage(Image *image);
 int SaveImage_as_png(Image image);
@@ -32,19 +27,16 @@ void CopyChar(char *source, char **dest);
 /*
 int main()
 {
-    Image img;
-    char *pathIn = "/home/lemonx/IT/podstawyProgramowania/lab6/kostka.png";
-    char *pathOut = "/home/lemonx/IT/podstawyProgramowania/lab6/kostkaOut.png";
-
-    int ret = LoadImage(&img, pathIn, pathOut, IMAGE_TYPE_PNG);
-    printf("--> %i\n", ret);
-    
-    //GrayScaleAvarage(&img);
-    //Inverse(&img);
-    //EdgingPhoto(&img,100,100,100);
-    UseFullScale(&img);
-    SaveImage_as_png(img);
-    FreeMemory(&img);
+   Image image;
+  char *pathIn =  "C:/Users/patdu/Desktop/IT/pwr/PodstawyProgramowania/lab6/stb_image/cube.png";
+  char *pathOut =  "C:/Users/patdu/Desktop/IT/pwr/PodstawyProgramowania/lab6/stb_image/cube2.png";
+  int i =LoadImage(&image,pathIn,pathOut,IMAGE_TYPE_PNG);
+  printf("-->%i\n",i);
+  i = Inverse(&image);
+  printf("-->%i\n",i);
+  i = SaveImage(&image);
+  printf("-->%i\n",i);
+    FreeMemory(&image);
 }
 */
 
@@ -54,9 +46,9 @@ int main()
     wiecej informacji nie bedę przepisywał są dostępne w stb_image.h linia 138
 */
 int LoadImage(Image *image ,char *inPath, char *outPath, int saveAsImageType){
+    
     Clear(image);
     if(saveAsImageType!= IMAGE_TYPE_JPG && saveAsImageType!=IMAGE_TYPE_PNG) return ERROR_IMAGETYPE;
-
     if(inPath == NULL) return NOINPUTFILE;
 
     if(outPath == NULL) image->outPath = NULL;
@@ -64,6 +56,7 @@ int LoadImage(Image *image ,char *inPath, char *outPath, int saveAsImageType){
 
     CopyChar(inPath,&(image->inPath));
 
+    image->imageType=saveAsImageType;
     int x,y,nChanels;
     if(!stbi_info(inPath, &x, &y, &nChanels)) return FILEEXTENSIONNOTSUPPORTED;
     
@@ -101,7 +94,7 @@ int SaveImage_as_png(Image image)
 {
     char *path =image.outPath;
     if(path == NULL) path=DEFAULT_IMAGE_OUTPUT_FILE_NAME_PNG;
-    return stbi_write_png(path, image.width, image.height, image.channels, image.img, image.width * image.channels);    
+    return stbi_write_png(path, image.width, image.height, image.channels, image.img, image.width * image.channels)? 0 : ERROR_IMAGE_DIDNT_SAVE;    
 }
 
 /*
@@ -111,7 +104,7 @@ int SaveImage_as_jpg(Image image)
 {
     char *path =image.outPath ;
     if(path == NULL) path=DEFAULT_IMAGE_OUTPUT_FILE_NAME_JPG;
-    return stbi_write_jpg(path,image.width, image.height, image.channels, image.img, 100); 
+    return stbi_write_jpg(path,image.width, image.height, image.channels, image.img, 100)? 0 : ERROR_IMAGE_DIDNT_SAVE;
 }
 
 /*

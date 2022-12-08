@@ -2,7 +2,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-
 #include "ImageEditorPlus.h"
 
 #define W_OK 0                   /* wartosc oznaczajaca brak bledow */
@@ -34,52 +33,27 @@ void wyzeruj_opcje(t_opcje * wybor);
 int DisplayPhoto(char pathOut[PATH_SIZE]);
 int przetwarzaj_opcje(int argc, char **argv, t_opcje *wybor);
 
-int fun()
-{
-
-  char *buf1 = (char*)malloc(20);
-  char *buf = (char*)malloc(sizeof(buf1));
-
-  printf("->  %i\n", sizeof(buf1));
-  printf("->  %i\n", sizeof(buf));
-
-
-}
-
+//gcc main.c ImageEditorPlus.c -o result -lm
 int main(int argc, char **argv)
 {
-  Image img;
+  Image image;
+  char *pathIn = "C:/Users/patdu/Desktop/IT/pwr/PodstawyProgramowania/lab6/stb_image/cube.png";
+  char *pathOut = "C:/Users/patdu/Desktop/IT/pwr/PodstawyProgramowania/lab6/stb_image/cube2.png";
+  int i =LoadImage(&image,pathIn,pathOut,IMAGE_TYPE_PNG);
+  printf("-->%i\n",i);
+  i = Inverse(&image);
+  printf("-->%i\n",i);
+  i = SaveImage(&image);
+  printf("-->%i\n",i);
+  FreeMemory(&image);
 
-  Image img;
-  char *pathIn = "/home/lemonx/IT/podstawyProgramowania/lab6/kostka.png";
-  char *pathOut = "/home/lemonx/IT/podstawyProgramowania/lab6/kostkaOut.png";
-
-  int ret = LoadImage(&img, pathIn, pathOut, IMAGE_TYPE_PNG);
+ // int ret = LoadImage(&img, pathIn, pathOut, IMAGE_TYPE_PNG);
   //GrayScaleAvarage(&img);
   //Inverse(&img);
   //EdgingPhoto(&img,100,100,100);
-  UseFullScale(&img);
-  SaveImage_as_png(img);
-  FreeMemory(&img);
-
-  int z,y;
-  z=5;
-  y=6;
-  int (*tab)[z];
-  
-  t_opcje opcje;
-
-  int ret = przetwarzaj_opcje(argc,argv, &opcje);
-
-  printf("--> ret:%i\n", ret);
-
-  tab = (int(*)[z])malloc(y * z * sizeof(int));
-  tab[1][2]=3;
-  tab[1][1]=2;
-  printf("kon %i\n", tab[1][1]);
-  printf("kon %i\n", tab[1][2]);
-
-  fun();
+  //UseFullScale(&img);
+  //SaveImage_as_png(img);
+  //FreeMemory(&img);
 }
 
 /************************************************************************/
