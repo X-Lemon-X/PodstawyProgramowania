@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 
-#include "ImageEditor.h"
+#include "ImageEditorPlus.h"
 
 #define W_OK 0                   /* wartosc oznaczajaca brak bledow */
 #define B_NIEPOPRAWNAOPCJA -1    /* kody bledow rozpoznawania opcji */
@@ -17,6 +17,10 @@
 #define SETCOLOR_GREEN 2
 #define SETCOLOR_BLUE 3
 #define SETCOLOR_GRAY 4
+
+
+#define PATH_SIZE 256 
+#define PHOTO_FILE_BUFF 400
 
 /* strukura do zapamietywania opcji podanych w wywolaniu programu */
 typedef struct {
@@ -44,6 +48,19 @@ int fun()
 
 int main(int argc, char **argv)
 {
+  Image img;
+
+  Image img;
+  char *pathIn = "/home/lemonx/IT/podstawyProgramowania/lab6/kostka.png";
+  char *pathOut = "/home/lemonx/IT/podstawyProgramowania/lab6/kostkaOut.png";
+
+  int ret = LoadImage(&img, pathIn, pathOut, IMAGE_TYPE_PNG);
+  //GrayScaleAvarage(&img);
+  //Inverse(&img);
+  //EdgingPhoto(&img,100,100,100);
+  UseFullScale(&img);
+  SaveImage_as_png(img);
+  FreeMemory(&img);
 
   int z,y;
   z=5;

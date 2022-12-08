@@ -27,18 +27,16 @@ void Clear(Image *image);
 int CheckIfLoaded(Image image);
 void SetPixel(Image *image,size_t x, size_t y, Pixel pixel);
 void GetPixel(Image *image,size_t x, size_t y, Pixel *pixel);
-
+void CopyChar(char *source, char **dest);
 
 /*
 int main()
 {
     Image img;
-    char *pathIn = "/home/lemonx/IT/podstawyProgramowania/lab6/sampl.ppm";
-    char *pathOut = "/home/lemonx/IT/podstawyProgramowania/lab6/samplout.png";
-    size_t sizeIN = 53;
-    size_t sizeOut = 56;
-    printf("--> %i\n",sizeIN);
-    int ret = LoadImage(&img, pathIn, sizeIN, pathOut, sizeOut, IMAGE_TYPE_PNG);
+    char *pathIn = "/home/lemonx/IT/podstawyProgramowania/lab6/kostka.png";
+    char *pathOut = "/home/lemonx/IT/podstawyProgramowania/lab6/kostkaOut.png";
+
+    int ret = LoadImage(&img, pathIn, pathOut, IMAGE_TYPE_PNG);
     printf("--> %i\n", ret);
     
     //GrayScaleAvarage(&img);
@@ -55,27 +53,19 @@ int main()
     funkcja ladujaca zdjęcie kożystając z funkcji biblioteki stbi_load 
     wiecej informacji nie bedę przepisywał są dostępne w stb_image.h linia 138
 */
-int LoadImage(Image *image ,char *inPath, size_t sizeIn ,char *outPath, size_t sizeOut, int saveAsImageType){
-    
+int LoadImage(Image *image ,char *inPath, char *outPath, int saveAsImageType){
     Clear(image);
-
     if(saveAsImageType!= IMAGE_TYPE_JPG && saveAsImageType!=IMAGE_TYPE_PNG) return ERROR_IMAGETYPE;
 
     if(inPath == NULL) return NOINPUTFILE;
 
     if(outPath == NULL) image->outPath = NULL;
-    else{
-         image->outPath = (char*)calloc(sizeOut,sizeof(char));
-         memcpy(image->outPath,outPath,sizeOut);
-         image->sizeOut = sizeOut;
-    }
-    
-    image->inPath = (char*)calloc(sizeIn,sizeof(char));
-    memcpy(image->inPath,inPath,sizeIn);
-    image->sizeIn = sizeIn;
+    else CopyChar(outPath,&(image->outPath)); 
 
-    int x,y,n;
-    if(!stbi_info(inPath, &x, &y, &n)) return FILEEXTENSIONNOTSUPPORTED;
+    CopyChar(inPath,&(image->inPath));
+
+    int x,y,nChanels;
+    if(!stbi_info(inPath, &x, &y, &nChanels)) return FILEEXTENSIONNOTSUPPORTED;
     
     image->img = stbi_load(inPath, &image->width, &image->height, &image->channels, STBI_default);
     if(image->img == NULL) return IMAGENOTLOADED;
@@ -85,6 +75,15 @@ int LoadImage(Image *image ,char *inPath, size_t sizeIn ,char *outPath, size_t s
     return 0;
 }
 
+void CopyChar(char *source, char **dest)
+{
+    *dest = (char*)calloc(strlen(source)+1,sizeof(char));
+    strcpy(*dest,source);
+}
+
+/*
+FUNCKJA ZAPISUJĄCA ZDJECIE NA PODSTAWIE USTAWIEŃ
+*/
 int SaveImage(Image *image)
 {
     if(!image->loaded) return IMAGENOTLOADED;
@@ -125,9 +124,11 @@ void FreeMemory(Image *image)
     free(image->outPath);
 }
 
+/*
+Funckja zeruje wartości obrazu
+*/
 void Clear(Image *image)
 {   
-    FreeMemory(image);
     image->imageSize=0;
     image->height=0;
     image->width=0;
@@ -136,11 +137,17 @@ void Clear(Image *image)
     image->outPath=NULL;
 }
 
+/*
+Sprawdza czy zdjęcie zostało poprawnie załadowane
+*/
 int CheckIfLoaded(Image image)
 {
     return image.loaded;
 }
 
+/*
+Zmienia kolor na uśredniony szary
+*/
 int GrayScale(Image *image)
 {
     if(!image->loaded) return IMAGENOTLOADED;
@@ -161,6 +168,9 @@ int GrayScale(Image *image)
     return OK;
 }
 
+/*
+odwraca zdjęcie
+*/
 int Inverse(Image *image)
 {
     if(!image->loaded) return IMAGENOTLOADED;
@@ -180,6 +190,9 @@ int Inverse(Image *image)
     return OK;
 }
 
+/*
+rozciągnięcie histogramu
+*/
 int UseFullScale(Image *image)
 {
     if(!(image->loaded)) return IMAGENOTLOADED;
@@ -230,6 +243,9 @@ int FindMaxMinValues(Image *image, Pixel *pixelMax, Pixel *pixelMin)
     return OK;
 }
 
+/*
+kopiuje pixel
+*/
 void CopyPixel(Pixel source, Pixel *destintion)
 {
     destintion->red=source.red;
@@ -237,6 +253,9 @@ void CopyPixel(Pixel source, Pixel *destintion)
     destintion->blue=source.blue;
 }
 
+/*
+zeruje wartość pixela
+*/
 void ZeroPixel(Pixel *pixel)
 {
     pixel->red=0;
@@ -244,6 +263,9 @@ void ZeroPixel(Pixel *pixel)
     pixel->blue=0;
 }
 
+/*
+proguje zdjęcie
+*/
 int EdgingPhoto(Image *image, unsigned char edgeRed,unsigned char edgeGreen, unsigned char edgeBlue )
 {   
     if(!image->loaded) return IMAGENOTLOADED;
@@ -266,20 +288,24 @@ int EdgingPhoto(Image *image, unsigned char edgeRed,unsigned char edgeGreen, uns
     return OK;
 }
 
+/*
+ustawia pixel[x][y] w zdjeciu na dany pixel
+*/
 void SetPixel(Image *image,size_t x, size_t y, Pixel pixel)
 {
-    unsigned char *p = image->img;
     size_t index = x * image->channels + y * image->channels * image->width; 
-    *(p + index) = pixel.red;
-    *(p + index + 1) = pixel.green;
-    *(p + index + 2) = pixel.blue;
+    *(image->img + index) = pixel.red;
+    *(image->img + index + 1) = pixel.green;
+    *(image->img + index + 2) = pixel.blue;
 }
 
+/*
+pobiera wartość pixel[x][y] ze zdjeciu
+*/
 void GetPixel(Image *image,size_t x, size_t y, Pixel *pixel)
 {
-    unsigned char *p = image->img;
     size_t index = x * image->channels + y * image->channels * image->width; 
-    pixel->red = (uint8_t)*(p + index);
-    pixel->green = (uint8_t)*(p + index + 1);
-    pixel->blue = (uint8_t)*(p + index + 2);
+    pixel->red = (uint8_t)*(image->img + index);
+    pixel->green = (uint8_t)*(image->img + index + 1);
+    pixel->blue = (uint8_t)*(image->img + index + 2);
 }
