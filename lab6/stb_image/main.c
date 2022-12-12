@@ -37,11 +37,15 @@ int przetwarzaj_opcje(int argc, char **argv, t_opcje *wybor);
 int main(int argc, char **argv)
 {
   Image image;
-  char *pathIn = "C:/Users/patdu/Desktop/IT/pwr/PodstawyProgramowania/lab6/stb_image/cube.png";
-  char *pathOut = "C:/Users/patdu/Desktop/IT/pwr/PodstawyProgramowania/lab6/stb_image/cube2.png";
+  char *pathIn = "/home/lemonx/IT/podstawyProgramowania/lab6/stb_image/ptasz.png";
+  char *pathOut = "/home/lemonx/IT/podstawyProgramowania/lab6/stb_image/kostka2.png";
   int i =LoadImage(&image,pathIn,pathOut,IMAGE_TYPE_PNG);
   printf("-->%i\n",i);
   i = Inverse(&image);
+  printf("-->%i\n",i);
+  i = GrayScale(&image);
+  printf("-->%i\n",i);
+  i = UseFullScale(&image);
   printf("-->%i\n",i);
   i = SaveImage(&image);
   printf("-->%i\n",i);
