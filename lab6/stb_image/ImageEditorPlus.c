@@ -4,6 +4,11 @@
 #include "stb_image_write.h"
 #include "ImageEditorPlus.h"
 
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 //#define STBI_NO_STDIO
 
 #define DEFAULT_IMAGE_OUTPUT_FILE_NAME_PNG "out.png"
@@ -24,21 +29,32 @@ void SetPixel(Image *image,size_t x, size_t y, Pixel pixel);
 void GetPixel(Image *image,size_t x, size_t y, Pixel *pixel);
 void CopyChar(char *source, char **dest);
 
-/*
+int borderMaskX[3][3] ={{-1,2,-1},
+                        {0,0,0},
+                        {-1,2,-1}};
+
+
+int borderMaskY[3][3] ={{-1,0,-1},
+                        {2,0,2},
+                        {-1,0,-1}};
+
+
+
+
+
 int main()
 {
    Image image;
-  char *pathIn =  "C:/Users/patdu/Desktop/IT/pwr/PodstawyProgramowania/lab6/stb_image/cube.png";
-  char *pathOut =  "C:/Users/patdu/Desktop/IT/pwr/PodstawyProgramowania/lab6/stb_image/cube2.png";
+  char *pathIn =  "C:/Users/patdu/Desktop/IT/PodstawyProgramowania/lab6/stb_image/cube.png";
+  char *pathOut =  "C:/Users/patdu/Desktop/IT/PodstawyProgramowania/lab6/stb_image/cube2.png";
   int i =LoadImage(&image,pathIn,pathOut,IMAGE_TYPE_PNG);
   printf("-->%i\n",i);
-  i = Inverse(&image);
+  i = DetectBorders(&image);
   printf("-->%i\n",i);
   i = SaveImage(&image);
   printf("-->%i\n",i);
     FreeMemory(&image);
 }
-*/
 
 /*
     sprawdza czy podana zotala ścieżka do pliku dla wyjścia i wejścia 
@@ -237,26 +253,6 @@ int FindMaxMinValues(Image *image, Pixel *pixelMax, Pixel *pixelMin)
 }
 
 /*
-kopiuje pixel
-*/
-void CopyPixel(Pixel source, Pixel *destintion)
-{
-    destintion->red=source.red;
-    destintion->green=source.green;
-    destintion->blue=source.blue;
-}
-
-/*
-zeruje wartość pixela
-*/
-void ZeroPixel(Pixel *pixel)
-{
-    pixel->red=0;
-    pixel->green=0;
-    pixel->blue=0;
-}
-
-/*
 proguje zdjęcie
 */
 int EdgingPhoto(Image *image, unsigned char edgeRed,unsigned char edgeGreen, unsigned char edgeBlue )
@@ -279,6 +275,88 @@ int EdgingPhoto(Image *image, unsigned char edgeRed,unsigned char edgeGreen, uns
         }   
     }
     return OK;
+}
+
+int DetectBorders(Image *image)
+{
+    if(!image->loaded)return IMAGENOTLOADED;
+
+    Image imageOut;
+    CopyImage(image,&imageOut);
+
+    Pixel pixel;
+    for (size_t x = 1; x < image->width-1; x++)
+    {
+        for (size_t y = 1; y < image->height-1; y++)
+        {
+            SetMask(&imageOut,x,y,&pixel,borderMaskX);
+            SetPixel(image,x,y,pixel);
+        }
+    }
+
+    CopyImage(image,&imageOut);
+    for (size_t x = 1; x < image->width-1; x++)
+    {
+        for (size_t y = 1; y < image->height-1; y++)
+        {
+            SetMask(&imageOut,x,y,&pixel,borderMaskX);
+            SetPixel(image,x,y,pixel);
+        }
+    }
+    FreeMemory(&imageOut);
+    return OK;
+}
+
+void CopyImage(Image *source, Image *dest)
+{
+    memcpy(&dest->img,&source->img, source->imageSize);
+    dest->height = source->height;
+    dest->width = source->width;
+    dest->imageSize = source->imageSize;
+    dest->channels = source->channels;
+    dest->loaded = source->loaded;
+    dest->imageType = source->imageType;
+    CopyChar(source->inPath,&(dest->inPath));
+    CopyChar(source->outPath,&(dest->outPath));
+}
+
+void SetMask(Image *image, size_t x, size_t y, Pixel *pixel, int mask[3][3])
+{
+
+    ZeroPixel(pixel);
+
+    for (int xm = -1; xm < 2; xm++)
+    {
+        for (int ym = -1; ym < 2; ym++)
+        {
+            Pixel pi;
+            GetPixel(image,x-xm,y-ym,&pi);
+            pixel->green += pi.green * mask[1+xm][1+ym];
+            pixel->blue += pi.blue * mask[1+xm][1+ym];
+            pixel->red += pi.red * mask[1+xm][1+ym];   
+        }
+    }
+}
+
+
+/*
+kopiuje pixel
+*/
+void CopyPixel(Pixel source, Pixel *destintion)
+{
+    destintion->red=source.red;
+    destintion->green=source.green;
+    destintion->blue=source.blue;
+}
+
+/*
+zeruje wartość pixela
+*/
+void ZeroPixel(Pixel *pixel)
+{
+    pixel->red=0;
+    pixel->green=0;
+    pixel->blue=0;
 }
 
 /*
