@@ -68,7 +68,7 @@ int main()
 /*
     sprawdza czy podana zotala ścieżka do pliku dla wyjścia i wejścia 
     funkcja ladujaca zdjęcie kożystając z funkcji biblioteki stbi_load 
-    wiecej informacji nie bedę przepisywał są dostępne w stb_image.h linia 138
+    wiecej informacji w stb_image.h linia 138
 */
 int LoadImage(Image *image ,char *inPath, char *outPath, int saveAsImageType){
     
@@ -139,6 +139,9 @@ int SaveImage_as_jpg(Image image)
     return stbi_write_jpg(path,image.width, image.height, image.channels, image.img, 100)? 0 : ERROR_IMAGE_DIDNT_SAVE;
 }
 
+/*
+zapisuje zdjecei jako ppm w postaci ASCI
+*/
 int SaveImage_as_ppm(Image image) {
   
   if(!image.loaded) return IMAGENOTLOADED;
@@ -348,7 +351,6 @@ int MaskImage(Image *image, int mask[3][3])
 
 void SetMask(Image *image, size_t x, size_t y, Pixel *pixel, int mask[3][3])
 {
-
     ZeroPixel(pixel);
 
     for (int xm = -1; xm < 2; xm++)
