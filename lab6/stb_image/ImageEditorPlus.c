@@ -13,6 +13,7 @@
 
 #define DEFAULT_IMAGE_OUTPUT_FILE_NAME_PNG "out.png"
 #define DEFAULT_IMAGE_OUTPUT_FILE_NAME_JPG "out.jpg"
+#define DEFAULT_IMAGE_OUTPUT_FILE_NAME_PPM "out.ppm"
 #define MAXLINELEBGTHPPM 70
 
 #define true 1
@@ -30,13 +31,11 @@ void SetPixel(Image *image,size_t x, size_t y, Pixel pixel);
 void GetPixel(Image *image,size_t x, size_t y, Pixel *pixel);
 void CopyChar(char *source, char **dest);
 void CopyImage(Image *source, Image *dest);
-int MaskImage(Image *image, int mask[3][3]);
 void SetMask(Image *image, size_t x, size_t y, Pixel *pixel, int mask[3][3]);
 
 int borderMaskX[3][3] ={{-1,2,-1},
                         {0,0,0},
                         {-1,2,-1}};
-
 
 int borderMaskY[3][3] ={{-1,0,-1},
                         {2,0,2},
@@ -46,7 +45,7 @@ int bordersCombined[3][3]={{-1,-1,-1},
                          {-1,8,-1},
                          {-1,-1,-1}};
 
-
+/*
 int main()
 {
    Image image;
@@ -64,7 +63,7 @@ int main()
   printf("-->%i\n",i);
     FreeMemory(&image);
 }
-
+*/
 
 /*
     sprawdza czy podana zotala ścieżka do pliku dla wyjścia i wejścia 
@@ -107,12 +106,17 @@ int SaveImage(Image *image)
 {
     if(!image->loaded) return IMAGENOTLOADED;
 
-    if(image->imageType == IMAGE_TYPE_JPG)
+    switch (image->imageType)
+    {
+    case IMAGE_TYPE_JPG:
         return SaveImage_as_jpg(*image);
-    else if(image->imageType == IMAGE_TYPE_PNG)
+     case IMAGE_TYPE_PNG:
         return SaveImage_as_png(*image);
-    else if(IMAGE_TYPE_PPM)
+    case IMAGE_TYPE_PPM:
         return SaveImage_as_ppm(*image);
+    default: 
+        return ERROR_IMAGETYPE;
+    }
 }
 
 /*
@@ -141,6 +145,8 @@ int SaveImage_as_ppm(Image image) {
   
   FILE *plik;
   int saved=0;
+  if(image.outPath == NULL) image.outPath=DEFAULT_IMAGE_OUTPUT_FILE_NAME_JPG;
+  
   plik = fopen(image.outPath,"w");
   if (plik == NULL) return ERROR_IMAGE_DIDNT_SAVE;
 
@@ -340,20 +346,6 @@ int MaskImage(Image *image, int mask[3][3])
     return OK;
 }
 
-void CopyImage(Image *source, Image *dest)
-{
-    dest->img = (unsigned char*)malloc(source->imageSize);
-    memcpy(dest->img,source->img, source->imageSize);
-    dest->height = source->height;
-    dest->width = source->width;
-    dest->imageSize = source->imageSize;
-    dest->channels = source->channels;
-    dest->loaded = source->loaded;
-    dest->imageType = source->imageType;
-    CopyChar(source->inPath,&(dest->inPath));
-    CopyChar(source->outPath,&(dest->outPath));
-}
-
 void SetMask(Image *image, size_t x, size_t y, Pixel *pixel, int mask[3][3])
 {
 
@@ -371,7 +363,6 @@ void SetMask(Image *image, size_t x, size_t y, Pixel *pixel, int mask[3][3])
         }
     }
 }
-
 
 /*
 kopiuje pixel
@@ -413,4 +404,18 @@ void GetPixel(Image *image,size_t x, size_t y, Pixel *pixel)
     pixel->red = (uint8_t)*(image->img + index);
     pixel->green = (uint8_t)*(image->img + index + 1);
     pixel->blue = (uint8_t)*(image->img + index + 2);
+}
+
+void CopyImage(Image *source, Image *dest)
+{
+    dest->img = (unsigned char*)malloc(source->imageSize);
+    memcpy(dest->img,source->img, source->imageSize);
+    dest->height = source->height;
+    dest->width = source->width;
+    dest->imageSize = source->imageSize;
+    dest->channels = source->channels;
+    dest->loaded = source->loaded;
+    dest->imageType = source->imageType;
+    CopyChar(source->inPath,&(dest->inPath));
+    CopyChar(source->outPath,&(dest->outPath));
 }

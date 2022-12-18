@@ -74,5 +74,7 @@ int UseFullScale(Image * image);
 void FreeMemory(Image *image);
 int EdgingPhoto(Image *image, unsigned char edgeRed,unsigned char edgeGreen, unsigned char edgeBlue);
 int GrayScale(Image *image);
+int MaskImage(Image *image, int mask[3][3]);
+void CopyChar(char *source, char **dest);
 
 #endif
