@@ -46,34 +46,33 @@ int main(int argc, char **argv)
   switch(przetwarzaj_opcje(argc,argv,&opcje))
   {  default:
     printf("error");
-    return 
+    exit(1);
     break;
   }
-
 }
 
 /************************************************************************/
-/* Funkcja rozpoznaje opcje wywolania programu zapisane w tablicy argv            */
-/* i zapisuje je w strukturze wybor                                               */
-/* Skladnia opcji wywolania programu                                              */
-/*         program {[-i nazwa] [-o nazwa] [-p liczba] [-n] [-r] [-d] [-m kolor]}  */
-/*         kolor  -      */
-/* Argumenty funkcji:                                                             */
-/*         argc  -  liczba argumentow wywolania wraz z nazwa programu             */
-/*         argv  -  tablica argumentow wywolania                                  */
-/*         wybor -  struktura z informacjami o wywolanych opcjach                 */
-/* PRE:                                                                           */
-/*      brak                                                                      */
-/* POST:                                                                          */
-/*      funkcja otwiera odpowiednie pliki, zwraca uchwyty do nich                 */
-/*      w strukturze wybór, do tego ustawia na 1 pola dla opcji, ktore            */
-/*	poprawnie wystapily w linii wywolania programu,                               */          
-/*	pola opcji nie wystepujacych w wywolaniu ustawione sa na 0;                   */          
-/*	zwraca wartosc W_OK (0), gdy wywolanie bylo poprawne                          */          
-/*	lub kod bledu zdefiniowany stalymi B_* (<0)                                   */          
-/* UWAGA:                                                                         */
-/*      funkcja nie sprawdza istnienia i praw dostepu do plikow                   */
-/*      w takich przypadkach zwracane uchwyty maja wartosc NULL                   */
+/* Funkcja rozpoznaje opcje wywolania programu zapisane w tablicy argv                              */
+/* i zapisuje je w strukturze wybor                                                                 */
+/* Skladnia opcji wywolania programu                                                                */
+/*         program {[-i nazwa] [-o nazwa] [-p liczba] [-n] [-r] [-d] [-s typ_zdjęcia_wyjściowego]}  */
+/*         typ_zdjęcia_wyjściowego - p dla png  j dal jpg                                           */
+/* Argumenty funkcji:                                                                               */
+/*         argc  -  liczba argumentow wywolania wraz z nazwa programu                               */
+/*         argv  -  tablica argumentow wywolania                                                    */
+/*         wybor -  struktura z informacjami o wywolanych opcjach                                   */
+/* PRE:                                                                                             */
+/*      brak                                                                                        */
+/* POST:                                                                                            */
+/*      funkcja otwiera odpowiednie pliki, zwraca uchwyty do nich                                   */
+/*      w strukturze wybór, do tego ustawia na 1 pola dla opcji, ktore                              */
+/*	poprawnie wystapily w linii wywolania programu,                                                 */          
+/*	pola opcji nie wystepujacych w wywolaniu ustawione sa na 0;                                     */          
+/*	zwraca wartosc W_OK (0), gdy wywolanie bylo poprawne                                            */          
+/*	lub kod bledu zdefiniowany stalymi B_* (<0)                                                     */          
+/* UWAGA:                                                                                           */
+/*      funkcja nie sprawdza istnienia i praw dostepu do plikow                                     */
+/*      w takich przypadkach zwracane uchwyty maja wartosc NULL                                     */
 /************************************************************************/
 
 int przetwarzaj_opcje(int argc, char **argv, t_opcje *wybor) {
@@ -125,16 +124,16 @@ int przetwarzaj_opcje(int argc, char **argv, t_opcje *wybor) {
             return B_BRAKWARTOSCI;             /* blad: brak wartosci progu */
         break;
         }
-        case 'm': {                 /* opcja z nazwa pliku wyjsciowego */
+        case 's': {                 /* opcja z nazwa pliku wyjsciowego */
           if (++i<argc) {   /* wczytujemy kolejny argument jako kolor */
             kolor=argv[i][2];
-            printf("--> kol: %c",kolor);
+            printf("--> typ: %c",kolor);
             switch (kolor == "r")
             {
-            case 'r':
+            case 'p':
               wybor->kolorWybur = SETCOLOR_RED;
             break;
-            case 'g':
+            case 'j':
               wybor->kolorWybur = SETCOLOR_GREEN;
             break;
             case 'b':

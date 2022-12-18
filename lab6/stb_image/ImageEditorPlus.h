@@ -18,6 +18,7 @@
 
 #define IMAGE_TYPE_JPG 1
 #define IMAGE_TYPE_PNG 2
+#define IMAGE_TYPE_PPM 3
 /**
  * -----------------------------------INFORMACJE---------------------------------------------------------------
  * 
