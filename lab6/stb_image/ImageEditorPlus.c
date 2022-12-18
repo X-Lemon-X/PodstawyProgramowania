@@ -149,7 +149,7 @@ int SaveImage_as_ppm(Image image) {
   FILE *plik;
   int saved=0;
   char *path =image.outPath ;
-  if(path == NULL) path=DEFAULT_IMAGE_OUTPUT_FILE_NAME_JPG;
+  if(path == NULL) path=DEFAULT_IMAGE_OUTPUT_FILE_NAME_PPM;
   plik = fopen(image.outPath,"w");
   if (plik == NULL) return ERROR_IMAGE_DIDNT_SAVE;
 
