@@ -50,11 +50,12 @@ int bordersCombined[3][3]={{-1,-1,-1},
 int main()
 {
    Image image;
-  char *pathIn =  "C:/Users/patdu/Desktop/IT/pwr/PodstawyProgramowania/lab6/stb_image/cube.png";
-  char *pathOut =  "C:/Users/patdu/Desktop/IT/pwr/PodstawyProgramowania/lab6/stb_image/cube2.ppm";
-  int i =LoadImage(&image,pathIn,pathOut,IMAGE_TYPE_PPM);
+  char *pathIn =  "/home/lemonx/IT/podstawyProgramowania/lab6/stb_image/kostka.png";
+  char *pathOut =  "/home/lemonx/IT/podstawyProgramowania/lab6/stb_image/kostka2.jpg";
+  int i =LoadImage(&image,pathIn,pathOut,IMAGE_TYPE_JPG);
   printf("-->%i\n",i);
-  i= GrayScale(&image);
+  //i= GrayScale(&image);
+  //i=Inverse(&image);
   //i = MaskImage(&image,bordersCombined);
   //i = MaskImage(&image, borderMaskX);
   //i = MaskImage(&image, borderMaskY);
