@@ -28,6 +28,9 @@ int CheckIfLoaded(Image image);
 void SetPixel(Image *image,size_t x, size_t y, Pixel pixel);
 void GetPixel(Image *image,size_t x, size_t y, Pixel *pixel);
 void CopyChar(char *source, char **dest);
+void CopyImage(Image *source, Image *dest);
+int MaskImage(Image *image, int mask[3][3]);
+void SetMask(Image *image, size_t x, size_t y, Pixel *pixel, int mask[3][3]);
 
 int borderMaskX[3][3] ={{-1,2,-1},
                         {0,0,0},
@@ -38,23 +41,28 @@ int borderMaskY[3][3] ={{-1,0,-1},
                         {2,0,2},
                         {-1,0,-1}};
 
+int bordersCombined[3][3]={{-1,-1,-1},
+                         {-1,8,-1},
+                         {-1,-1,-1}};
 
-
-
-
+/*
 int main()
 {
    Image image;
-  char *pathIn =  "C:/Users/patdu/Desktop/IT/PodstawyProgramowania/lab6/stb_image/cube.png";
-  char *pathOut =  "C:/Users/patdu/Desktop/IT/PodstawyProgramowania/lab6/stb_image/cube2.png";
+  char *pathIn =  "/home/lemonx/IT/podstawyProgramowania/lab6/stb_image/img.png";
+  char *pathOut =  "/home/lemonx/IT/podstawyProgramowania/lab6/stb_image/kostka2.png";
   int i =LoadImage(&image,pathIn,pathOut,IMAGE_TYPE_PNG);
   printf("-->%i\n",i);
-  i = DetectBorders(&image);
+  i= GrayScale(&image);
+  //i = MaskImage(&image,bordersCombined);
+  //i = MaskImage(&image, borderMaskX);
+  //i = MaskImage(&image, borderMaskY);
   printf("-->%i\n",i);
   i = SaveImage(&image);
   printf("-->%i\n",i);
     FreeMemory(&image);
 }
+*/
 
 /*
     sprawdza czy podana zotala ścieżka do pliku dla wyjścia i wejścia 
@@ -277,7 +285,7 @@ int EdgingPhoto(Image *image, unsigned char edgeRed,unsigned char edgeGreen, uns
     return OK;
 }
 
-int DetectBorders(Image *image)
+int MaskImage(Image *image, int mask[3][3])
 {
     if(!image->loaded)return IMAGENOTLOADED;
 
@@ -289,17 +297,7 @@ int DetectBorders(Image *image)
     {
         for (size_t y = 1; y < image->height-1; y++)
         {
-            SetMask(&imageOut,x,y,&pixel,borderMaskX);
-            SetPixel(image,x,y,pixel);
-        }
-    }
-
-    CopyImage(image,&imageOut);
-    for (size_t x = 1; x < image->width-1; x++)
-    {
-        for (size_t y = 1; y < image->height-1; y++)
-        {
-            SetMask(&imageOut,x,y,&pixel,borderMaskX);
+            SetMask(&imageOut,x,y,&pixel,mask);
             SetPixel(image,x,y,pixel);
         }
     }
@@ -309,7 +307,8 @@ int DetectBorders(Image *image)
 
 void CopyImage(Image *source, Image *dest)
 {
-    memcpy(&dest->img,&source->img, source->imageSize);
+    dest->img = (unsigned char*)malloc(source->imageSize);
+    memcpy(dest->img,source->img, source->imageSize);
     dest->height = source->height;
     dest->width = source->width;
     dest->imageSize = source->imageSize;

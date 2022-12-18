@@ -36,28 +36,20 @@ int przetwarzaj_opcje(int argc, char **argv, t_opcje *wybor);
 //gcc main.c ImageEditorPlus.c -o result -lm
 int main(int argc, char **argv)
 {
+  t_opcje opcje;
   Image image;
   char *pathIn = "/home/lemonx/IT/podstawyProgramowania/lab6/stb_image/ptasz.png";
   char *pathOut = "/home/lemonx/IT/podstawyProgramowania/lab6/stb_image/kostka2.png";
   int i =LoadImage(&image,pathIn,pathOut,IMAGE_TYPE_PNG);
-  printf("-->%i\n",i);
-  i = Inverse(&image);
-  printf("-->%i\n",i);
-  i = GrayScale(&image);
-  printf("-->%i\n",i);
-  i = UseFullScale(&image);
-  printf("-->%i\n",i);
-  i = SaveImage(&image);
-  printf("-->%i\n",i);
-  FreeMemory(&image);
+  
+  int error;
+  switch(przetwarzaj_opcje(argc,argv,&opcje))
+  {  default:
+    printf("error");
+    return 
+    break;
+  }
 
- // int ret = LoadImage(&img, pathIn, pathOut, IMAGE_TYPE_PNG);
-  //GrayScaleAvarage(&img);
-  //Inverse(&img);
-  //EdgingPhoto(&img,100,100,100);
-  //UseFullScale(&img);
-  //SaveImage_as_png(img);
-  //FreeMemory(&img);
 }
 
 /************************************************************************/
@@ -65,7 +57,7 @@ int main(int argc, char **argv)
 /* i zapisuje je w strukturze wybor                                               */
 /* Skladnia opcji wywolania programu                                              */
 /*         program {[-i nazwa] [-o nazwa] [-p liczba] [-n] [-r] [-d] [-m kolor]}  */
-/*         kolor  - r=> czerwony, b => niebieski, g=> dla zielony, s=> szary      */
+/*         kolor  -      */
 /* Argumenty funkcji:                                                             */
 /*         argc  -  liczba argumentow wywolania wraz z nazwa programu             */
 /*         argv  -  tablica argumentow wywolania                                  */
