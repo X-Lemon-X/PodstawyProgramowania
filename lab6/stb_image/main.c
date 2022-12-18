@@ -16,20 +16,17 @@
 #define SETCOLOR_IMAGETYPE_PNG IMAGE_TYPE_PNG
 #define SETCOLOR_IMAGETYPE_PPM IMAGE_TYPE_PPM
 
-
-#define PATH_SIZE 256 
-#define PHOTO_FILE_BUFF 400
-
 /* strukura do zapamietywania opcji podanych w wywolaniu programu */
 typedef struct {
-  char *plik_we, *plik_wy;        /* uchwyty do pliku wej. i wyj. */
+  FILE *plik_we;
+  char  *plik_wy;        /* uchwyty do pliku wej. i wyj. */
   int negatyw,progowanie,grayScale,useFullScale,wyswietlenie, typPlikuWyj;      /* opcje */
   int w_progu;              /* wartosc progu dla opcji progowanie */ 
 } t_opcje;
 
 void GetDate(char *dateOut);
 void wyzeruj_opcje(t_opcje * wybor);
-int DisplayPhoto(char pathOut[PATH_SIZE]);
+int DisplayPhoto(char *pathOut);
 int przetwarzaj_opcje(int argc, char **argv, t_opcje *wybor);
 void PrintError(int errorCode);
 void PrintErrorOpcje(int errorCode);
@@ -129,7 +126,7 @@ void PrintErrorOpcje(int errorCode)
 /* i zapisuje je w strukturze wybor                                                                      */
 /* Skladnia opcji wywolania programu                                                                     */
 /*         program {[-i nazwa] [-o nazwa] [-p liczba] [-n] [-k] [-g] [-d] [-s typ_zdjęcia_wyjściowego]}  */
-/*         typ_zdjęcia_wyjściowego - p dla png  j dal jpg                                                */
+/*         typ_zdjęcia_wyjściowego - p dla png  j dal jpg  m dla ppm                                               */
 /* Argumenty funkcji:                                                                                    */
 /*         argc  -  liczba argumentow wywolania wraz z nazwa programu                                    */
 /*         argv  -  tablica argumentow wywolania                                                         */
@@ -162,10 +159,10 @@ int przetwarzaj_opcje(int argc, char **argv, t_opcje *wybor) {
     switch (argv[i][1]) {
         case 'i': {                 /* opcja z nazwa pliku wejsciowego */
           if (++i<argc) {   /* wczytujemy kolejny argument jako nazwe pliku */
-            wybor->plik_we=argv[i];      
-          } 
-          else 
-            return B_BRAKNAZWY;                   /* blad: brak nazwy pliku */
+              wybor->plik_we=argv[i];
+            } 
+            else 
+              return B_BRAKNAZWY;                   /* blad: brak nazwy pliku */
           break;
         }       
         case 'o': {                 /* opcja z nazwa pliku wyjsciowego */
@@ -255,9 +252,9 @@ void wyzeruj_opcje(t_opcje * wybor) {
 
 
 //funkcja wyświetlająca obraz za pomocą programu ristrettro
-int DisplayPhoto(char pathIn[PATH_SIZE])
+int DisplayPhoto(char *pathIn)
 {
-  char command[PHOTO_FILE_BUFF];
+  char command[1000];
   strcpy(command,"ristretto ");
   strcat(command,pathIn);
   printf("%s\n",command);

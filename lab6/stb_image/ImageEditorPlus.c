@@ -70,7 +70,7 @@ int main()
     funkcja ladujaca zdjęcie kożystając z funkcji biblioteki stbi_load 
     wiecej informacji nie bedę przepisywał są dostępne w stb_image.h linia 138
 */
-int LoadImage(Image *image ,FILE *inPath, char *outPath, int saveAsImageType){
+int LoadImage(Image *image ,char *inPath, char *outPath, int saveAsImageType){
     
     Clear(image);
     if(saveAsImageType!= IMAGE_TYPE_JPG && saveAsImageType!=IMAGE_TYPE_PNG && saveAsImageType!=IMAGE_TYPE_PPM ) return ERROR_IMAGETYPE;
@@ -79,13 +79,13 @@ int LoadImage(Image *image ,FILE *inPath, char *outPath, int saveAsImageType){
     if(outPath == NULL) image->outPath = NULL;
     else CopyChar(outPath,&(image->outPath)); 
 
-    //CopyChar(inPath,&(image->inPath));
+    CopyChar(inPath,&(image->inPath));
 
     image->imageType=saveAsImageType;
     int x,y,nChanels;
-    if(!stbi_info_from_file(inPath, &x, &y, &nChanels)) return FILEEXTENSIONNOTSUPPORTED;
-    
-    image->img = stbi_load_from_file(inPath, &image->width, &image->height, &image->channels, STBI_default);
+    if(!stbi_info(inPath, &x, &y, &nChanels)) return FILEEXTENSIONNOTSUPPORTED;
+
+    image->img = stbi_load(inPath, &image->width, &image->height, &image->channels, STBI_default);
     if(image->img == NULL) return IMAGENOTLOADED;
     
     image->imageSize = image->width * image->height * image->channels;

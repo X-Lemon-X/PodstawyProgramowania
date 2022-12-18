@@ -55,7 +55,8 @@ typedef struct {
     unsigned char *img;
     int width, height, channels, loaded, imageType;
     size_t imageSize;
-    char *inPath, *outPath;
+    char *inPath;
+    char *outPath;
 } Image;
 
 /*
