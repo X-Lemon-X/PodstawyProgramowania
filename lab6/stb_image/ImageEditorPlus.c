@@ -22,9 +22,9 @@
 typedef unsigned char uint8_t;
 
 int SaveImage(Image *image);
-int SaveImage_as_png(Image image);
-int SaveImage_as_jpg(Image image);
-int SaveImage_as_ppm(Image image);
+int SaveImage_as_png(Image *image);
+int SaveImage_as_jpg(Image *image);
+int SaveImage_as_ppm(Image *image);
 void Clear(Image *image);
 int CheckIfLoaded(Image image);
 void SetPixel(Image *image,size_t x, size_t y, Pixel pixel);
@@ -49,13 +49,13 @@ int bordersCombined[3][3]={{-1,-1,-1},
 int main()
 {
    Image image;
-  char *pathIn =  "/home/lemonx/IT/podstawyProgramowania/lab6/stb_image/kostka.png";
+  char *pathIn =  "/home/lemonx/IT/podstawyProgramowania/lab6/stb_image/ptasz.png";
   char *pathOut =  "/home/lemonx/IT/podstawyProgramowania/lab6/stb_image/kostka2.jpg";
   int i =LoadImage(&image,pathIn,pathOut,IMAGE_TYPE_JPG);
   printf("-->%i\n",i);
-  //i= GrayScale(&image);
+  i= GrayScale(&image);
   //i=Inverse(&image);
-  //i = MaskImage(&image,bordersCombined);
+  i = MaskImage(&image,bordersCombined);
   //i = MaskImage(&image, borderMaskX);
   //i = MaskImage(&image, borderMaskY);
   printf("-->%i\n",i);
@@ -109,11 +109,11 @@ int SaveImage(Image *image)
     switch (image->imageType)
     {
     case IMAGE_TYPE_JPG:
-        return SaveImage_as_jpg(*image);
+        return SaveImage_as_jpg(image);
      case IMAGE_TYPE_PNG:
-        return SaveImage_as_png(*image);
+        return SaveImage_as_png(image);
     case IMAGE_TYPE_PPM:
-        return SaveImage_as_ppm(*image);
+        return SaveImage_as_ppm(image);
     default: 
         return ERROR_IMAGETYPE;
     }
@@ -122,51 +122,53 @@ int SaveImage(Image *image)
 /*
     Zapisuje zdjęcie jako png
 */
-int SaveImage_as_png(Image image)
+int SaveImage_as_png(Image *image)
 {
-    char *path =image.outPath;
-    if(path == NULL) path=DEFAULT_IMAGE_OUTPUT_FILE_NAME_PNG;
-    return stbi_write_png(path, image.width, image.height, image.channels, image.img, image.width * image.channels)? 0 : ERROR_IMAGE_DIDNT_SAVE;    
+    char *path =image->outPath;
+    if(path == NULL){ path=DEFAULT_IMAGE_OUTPUT_FILE_NAME_PNG; CopyChar(path,&(image->outPath));}
+    return stbi_write_png(path, image->width, image->height, image->channels, image->img, image->width * image->channels)? 0 : ERROR_IMAGE_DIDNT_SAVE;    
 }
 
 /*
     Zapisuje zdjęcie jako jpg
 */
-int SaveImage_as_jpg(Image image)
+int SaveImage_as_jpg(Image *image)
 {
-    char *path =image.outPath ;
-    if(path == NULL) path=DEFAULT_IMAGE_OUTPUT_FILE_NAME_JPG;
-    return stbi_write_jpg(path,image.width, image.height, image.channels, image.img, 100)? 0 : ERROR_IMAGE_DIDNT_SAVE;
+    char *path =image->outPath ;
+    if(path == NULL){ path=DEFAULT_IMAGE_OUTPUT_FILE_NAME_JPG;CopyChar(path,&(image->outPath));}
+    return stbi_write_jpg(path,image->width, image->height, image->channels, image->img, 100)? 0 : ERROR_IMAGE_DIDNT_SAVE;
 }
 
 /*
 zapisuje zdjecei jako ppm w postaci ASCI
 */
-int SaveImage_as_ppm(Image image) {
+int SaveImage_as_ppm(Image *image) {
   
-  if(!image.loaded) return IMAGENOTLOADED;
+  if(!image->loaded) return IMAGENOTLOADED;
   
   FILE *plik;
   int saved=0;
-  char *path =image.outPath ;
-  if(path == NULL) path=DEFAULT_IMAGE_OUTPUT_FILE_NAME_PPM;
-  plik = fopen(image.outPath,"w");
-  if (plik == NULL) return ERROR_IMAGE_DIDNT_SAVE;
+  char *path =image->outPath ;
+  
+  if(path == NULL){ path=DEFAULT_IMAGE_OUTPUT_FILE_NAME_PPM; CopyChar(path,&(image->outPath));}
+  
+  plik = fopen(path,"w");
+  if (plik == NULL)return ERROR_IMAGE_DIDNT_SAVE; 
 
 
   fprintf(plik,"P3\n");
-  fprintf(plik,"%i %i\n",image.width,image.height);
+  fprintf(plik,"%i %i\n",image->width,image->height);
   fprintf(plik,"%i\n", PIXELMAXVALUE);
   int maxLineSizeCounter = 0;
   Pixel pixel;
 
-  for (size_t y = 0; y < image.height; y++){
-    for (size_t x = 0; x < image.width; x++){
+  for (size_t y = 0; y < image->height; y++){
+    for (size_t x = 0; x < image->width; x++){
         if(maxLineSizeCounter > MAXLINELEBGTHPPM){
             maxLineSizeCounter=0;
             fprintf(plik,"\n");
         }
-        GetPixel(&image,x,y,&pixel);
+        GetPixel(image,x,y,&pixel);
         fprintf(plik,"%i %i %i ", pixel.red, pixel.green, pixel.blue);
         maxLineSizeCounter++;
     }

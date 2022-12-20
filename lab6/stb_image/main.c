@@ -18,7 +18,7 @@
 
 /* strukura do zapamietywania opcji podanych w wywolaniu programu */
 typedef struct {
-  FILE *plik_we;
+  char *plik_we;
   char  *plik_wy;        /* uchwyty do pliku wej. i wyj. */
   int negatyw,progowanie,grayScale,useFullScale,wyswietlenie, typPlikuWyj;      /* opcje */
   int w_progu;              /* wartosc progu dla opcji progowanie */ 
@@ -39,7 +39,7 @@ int main(int argc, char **argv)
 
   Image image;
   PrintError(LoadImage(&image,opcje.plik_we,opcje.plik_wy,opcje.typPlikuWyj));
-  
+
   if(opcje.negatyw)
     PrintError(Inverse(&image));
   
@@ -254,11 +254,9 @@ void wyzeruj_opcje(t_opcje * wybor) {
 //funkcja wyświetlająca obraz za pomocą programu ristrettro
 int DisplayPhoto(char *pathIn)
 {
-  char command[1000];
+  const char command[1000];
   strcpy(command,"ristretto ");
   strcat(command,pathIn);
-  printf("%s\n",command);
-  system(command);
-
+  return system(command);
 }
 
