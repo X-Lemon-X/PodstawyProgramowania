@@ -4,8 +4,10 @@
 #ifndef STOS_H
 #define STOS_H
 
+typedef int TYPE_OF_DATA;
+
 typedef struct  {
-    int data;
+    TYPE_OF_DATA data;
     struct Element *next;
 }Element;
 
@@ -17,9 +19,13 @@ typedef struct {
     Element watchdog;
 }Lista;
 
-void Push(Lista *lista, Element *elem);
-void Pop(Lista *lista);
+void Init(Lista *lista);
+void Push(Lista *lista, Element *element);
+void Pop(Lista *lista, Element *element);
 int Top(Lista *lista);
+void Clear(Lista *lista);
+int Count(Lista *lista);
+int Print(Lista *lista, FILE *stream);
 
 
 

@@ -1,11 +1,13 @@
 
 #include "Stos.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 void Init(Lista *lista)
 {
-    lista->count=0;
-    lista->first=NULL;
-    lista->last=NULL;
+  lista->count=0;
+  lista->first=NULL;
+  lista->last=NULL;
 }
 
 void Push(Lista *lista, Element *element)
@@ -30,7 +32,7 @@ void Push(Lista *lista, Element *element)
   
 }
 
-void Pop(Lista *lista)
+void Pop(Lista *lista, Element *element)
 {
     if(lista == NULL) return;
 
@@ -44,6 +46,9 @@ void Pop(Lista *lista)
     lista->count--;
 
     Element *temp = lista->last->next;
+    element->data = lista->last->data;
+    element->next = lista->last->next;
+
     free(lista->last);
     lista->last = temp;
 }
@@ -55,6 +60,28 @@ int Top(Lista *lista)
     return lista->count;
 }
 
+void Clear(Lista *lista)
+{
+  Element el;
+  for (size_t i = 0; i < Count(lista); i++)
+    Pop(lista,&el);
+}
+
+int Count(Lista *lista)
+{
+  return lista->count;
+}
+
+int Print(Lista *lista, FILE *stream)
+{
+  if(lista==NULL);
+  Element *el = lista->last;
+  while ( el != NULL)
+  {
+    fprintf(stream,"%d",(TYPE_OF_DATA)lista->last->data);
+    el = el->next;
+  }
+}
 
 void main()
 {
@@ -79,8 +106,8 @@ ele = Top(&lista);
 el.data =5;
   Push(&lista,&el);
 
-    Pop(&lista);
-    Pop(&lista);
-    Pop(&lista);
+    Pop(&lista,&el);
+    Pop(&lista,&el);
+    Pop(&lista,&el);
 
 }
