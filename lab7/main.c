@@ -4,7 +4,6 @@
 #define SIZE (size_t)40
 
 void clearbuff(void *buffor, size_t size);
-int GetTwonumbers(Lista *numbers, int *num1, int *num2);
 
 int main()
 {
@@ -110,21 +109,6 @@ int main()
   printf("Kalkulator stop!\n");
   return 0;
 }
-
-int GetTwoNumbers(Lista *numbers, int *num1, int *num2)
-{
-  if(Count(numbers)>=2)
-  {
-    Element el1, el2;
-    Pop(&numbers,&el2);
-    Pop(&numbers,&el1);
-    *num1=el1.data, *num2=el2.data;
-    return 0;
-  }
-  else
-    return 1;
-}
-
 
 void clearbuff(void *buffor, size_t size)
 {
