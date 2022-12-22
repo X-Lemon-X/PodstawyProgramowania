@@ -14,8 +14,9 @@ int main()
   char buf[SIZE];
   char oper='\0', signNext;
   int arg;
+  printf("Kalkulator start:\n");
 
-  while(oper != 'q'){
+  while(1){
     
     clearbuff(buf,SIZE);
     scanf("%40s", buf); 
@@ -29,12 +30,12 @@ int main()
 
     switch (oper)
     {
-    case 'q':
+    case 'q': Clear(&numbers);
       return;
     case 'P': Pop(&numbers,NULL);
-      return;
+      break;
     case 'c': Clear(&numbers);
-      return;
+      break;
     case 'r':{
       if(Count(&numbers)>=2){
       Element el1, el2;
@@ -43,7 +44,7 @@ int main()
       Push(&numbers,el1);
       Push(&numbers,el2);
       }
-      return;
+      break;
     }
     case 'd':{
      if(Count(&numbers)>=1){
@@ -52,19 +53,19 @@ int main()
       Push(&numbers,el1);
       Push(&numbers,el1);
       }
-      return;
+      break;
     }
     case 'p':{
-      printf("Stos last elemnt:\n");
+      printf("Stos last elemnt:\n[");
       Print(&numbers,1,stdout);
-      printf("\n");
-      return;
+      printf("]\n");
+      break;
     }
     case 'f':{
-      printf("Stos all elemnt:\n");
+      printf("Stos all elemnt:\n[");
       Print(&numbers,Count(&numbers),stdout);
-      printf("\n");
-      return;
+      printf("]\n");
+      break;
     }
     default:
       break;
@@ -77,8 +78,6 @@ int main()
       Pop(&numbers,&el2);
       Pop(&numbers,&el1);
       int num1=el1.data, num2=el2.data, result;
-      printf("operacja >%c  wykonywanie liczba1: %i   liczba2: %i\n",oper, num1, num2);
-
       switch (oper)
       {
       case '+':
@@ -93,24 +92,22 @@ int main()
       case '/':
         result = num1/num2;
         break;
-
-      default: printf("Sign error!\n");
+      default: 
         break;
       }
 
-      printf("resultat=>%i\n",result);
+      printf("Operacja: %i %c %i = %i\n", num1,oper, num2, result);
       el1.data = result;
-      //el1.next = NULL;
       Push(&numbers,el1);
-      oper='\0';
     }
 
-    printf("Numbers:\n");
+    printf("Numbers[");
     Print(&numbers,Count(&numbers),stdout);
-    printf("\n");
+    printf("]\n");
+    oper='\0';
   }
 
-
+  printf("Kalkulator stop!\n");
   return 0;
 }
 

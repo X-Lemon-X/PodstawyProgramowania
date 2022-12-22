@@ -56,7 +56,7 @@ void Pop(Lista *lista, Element *element)
     }
     else
     {
-      free(lista->last->el);
+      //free(lista->last->el);
       free(lista->last);
       lista->last = NULL;
       lista->first = NULL;
