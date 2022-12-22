@@ -6,7 +6,20 @@
 
 typedef int TYPE_OF_DATA;
 
+union Element_data
+{
+    int _int;
+    char _char;
+    long _long;
+    float _float;
+    double _double;
+    void* _void;
+};
+
+
+
 typedef struct  {
+    void* el;
     TYPE_OF_DATA data;
     struct Element *next;
 }Element;
@@ -18,12 +31,12 @@ typedef struct {
 }Lista;
 
 void Init(Lista *lista);
-void Push(Lista *lista, Element *element);
+void Push(Lista *lista, Element element);
 void Pop(Lista *lista, Element *element);
 int Top(Lista *lista);
 void Clear(Lista *lista);
 int Count(Lista *lista);
-int Print(Lista *lista, FILE *stream);
+int Print(Lista *lista, size_t n_lastelements, FILE *stream);
 
 
 

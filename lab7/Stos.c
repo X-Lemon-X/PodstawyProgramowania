@@ -10,14 +10,15 @@ void Init(Lista *lista)
   lista->last=NULL;
 }
 
-void Push(Lista *lista, Element *element)
+void Push(Lista *lista, Element element)
 {   
   Element *temp = (Element*)malloc(sizeof(Element));
   
-  if(element==NULL) return;
+ // if(element==NULL) return;
 
-  temp->data = element->data;
-  element->next==NULL;
+  temp->data = element.data;
+  //temp->el = element.el;
+  element.next==NULL;
 
   lista->count++;
 
@@ -40,16 +41,22 @@ void Pop(Lista *lista, Element *element)
     if(lista->last == NULL) return;
  
     lista->count--;
-    element->data = lista->last->data;
+    if(element!=NULL)
+    {
+      element->data = lista->last->data;
+      //element->el = lista->last->el;
+    }
 
     if(lista->last->next != NULL)
     {
       Element *temp = lista->last->next;
+      //free(lista->last->el);
       free(lista->last);
       lista->last = temp;
     }
     else
     {
+      free(lista->last->el);
       free(lista->last);
       lista->last = NULL;
       lista->first = NULL;
@@ -65,9 +72,8 @@ int Top(Lista *lista)
 
 void Clear(Lista *lista)
 {
-  Element el;
   for (size_t i = 0; i < Count(lista); i++)
-    Pop(lista,&el);
+    Pop(lista,NULL);
 }
 
 int Count(Lista *lista)
@@ -75,11 +81,12 @@ int Count(Lista *lista)
   return lista->count;
 }
 
-int Print(Lista *lista, FILE *stream)
+int Print(Lista *lista,size_t n_lastelements, FILE *stream)
 {
   if(lista==NULL);
   Element *el = lista->last;
-  while ( el != NULL)
+  size_t count=0;
+  while ( el != NULL && count++ < n_lastelements)
   {
     fprintf(stream,"%d, ",(TYPE_OF_DATA)el->data);
     el = el->next;
