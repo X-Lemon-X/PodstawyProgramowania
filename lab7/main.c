@@ -70,7 +70,7 @@ int main()
       break;
     }
 
-    if(oper!='\0' && Count(&numbers)>=2)
+    if((oper == '+' || oper == '-' || oper == '*' || oper == '/') && Count(&numbers)>=2)
     {
       
       Element el1, el2;
