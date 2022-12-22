@@ -14,9 +14,7 @@ typedef struct  {
 typedef struct {
     Element *first;
     Element *last;
-
     int count;
-    Element watchdog;
 }Lista;
 
 void Init(Lista *lista);

@@ -17,6 +17,7 @@ void Push(Lista *lista, Element *element)
   if(element==NULL) return;
 
   temp->data = element->data;
+  element->next==NULL;
 
   lista->count++;
 
@@ -38,19 +39,21 @@ void Pop(Lista *lista, Element *element)
 
     if(lista->last == NULL) return;
  
-    if(lista->last->next == NULL)
-    {
-        lista->last = NULL;
-        lista->first = NULL;
-    }
     lista->count--;
-
-    Element *temp = lista->last->next;
     element->data = lista->last->data;
-    element->next = lista->last->next;
 
-    free(lista->last);
-    lista->last = temp;
+    if(lista->last->next != NULL)
+    {
+      Element *temp = lista->last->next;
+      free(lista->last);
+      lista->last = temp;
+    }
+    else
+    {
+      free(lista->last);
+      lista->last = NULL;
+      lista->first = NULL;
+    }
 }
 
 int Top(Lista *lista)
@@ -78,11 +81,12 @@ int Print(Lista *lista, FILE *stream)
   Element *el = lista->last;
   while ( el != NULL)
   {
-    fprintf(stream,"%d",(TYPE_OF_DATA)lista->last->data);
+    fprintf(stream,"%d, ",(TYPE_OF_DATA)el->data);
     el = el->next;
   }
 }
 
+/*
 void main()
 {
   Element el;
@@ -92,22 +96,14 @@ void main()
   el.data = 1;
 
   Push(&lista,&el);
-
-el.data =2;
+  el.data =2;
   Push(&lista,&el);
-ele = Top(&lista);
-el.data =3;
+  el.data =3;
   Push(&lista,&el);
-
-el.data =4;
-  Push(&lista,&el);
-
-ele = Top(&lista);
-el.data =5;
-  Push(&lista,&el);
-
+  Print(&lista,stdout);
     Pop(&lista,&el);
     Pop(&lista,&el);
     Pop(&lista,&el);
-
+  Print(&lista,stdout);
 }
+*/
