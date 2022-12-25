@@ -8,10 +8,8 @@ void clearbuff(void *buffor, size_t size);
 int main()
 {
   // inicjalizacja stosu
-  _data_type dt;
-  Element elem;
-  Stack numbers;
-  Init(&numbers,_Int);
+  Lista numbers;
+  Init(&numbers);
   char buf[SIZE];
   char oper='\0', signNext;
   int arg, conditionLoop=1;
@@ -21,15 +19,13 @@ int main()
     
     //czyści buffor wejśćiowy
     clearbuff(buf,SIZE);
-
     //zczytuje dane wejsciowe do buffora
     scanf("%40s", buf);
-    
     //spraddza czy wprowadzona wartość jest liczbą  
     if(isdigit(buf[0]) || (buf[0]== '-' && isdigit(buf[1]))) 
     {
-      dt._int=atoi(buf);
-      Push(&numbers,SetValue(dt));
+      Element el; el.data=atoi(buf);
+      Push(&numbers,el);
     }
     else oper = buf[0];
 
@@ -89,8 +85,7 @@ int main()
       Element el1, el2;
       Pop(&numbers,&el2);
       Pop(&numbers,&el1);
-
-      int num1=GetValue(el1)._int, num2=GetValue(el2)._int, result=0, cond=1;
+      int num1=el1.data, num2=el2.data, result=0, cond=1;
       char*info="";
       switch (oper)
       {
@@ -113,8 +108,8 @@ int main()
 
       if(cond){
         printf("Equation: %i %c %i = %i\n", num1,oper, num2, result);
-        dt._int=result;
-        Push(&numbers,SetValue(dt));
+        el1.data = result;
+        Push(&numbers,el1);
       }
       else{
         Push(&numbers,el1);

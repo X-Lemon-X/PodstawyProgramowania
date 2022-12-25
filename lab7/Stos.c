@@ -3,88 +3,141 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// inicjalizuje stos
-void Init(Lista *lista)
+
+void Init(Stack *stack, _data_type_type type)
 {
-  lista->count=0;
-  lista->first=NULL;
-  lista->last=NULL;
+  stack->typeOfData = type;
+  stack->count=0;
+  stack->first=NULL;
+  stack->last=NULL;
 }
 
-
-void Push(Lista *lista, Element element)
+void Push(Stack *stack, Element element)
 {   
   Element *temp = (Element*)malloc(sizeof(Element));
   temp->data = element.data;
   element.next==NULL;
-  lista->count++;
+  stack->count++;
 
-  if(lista->first==NULL)
+  if(stack->first==NULL)
   {
     temp->next=NULL;
-    lista->last = temp;
-    lista->first = temp;
+    stack->last = temp;
+    stack->first = temp;
     return;  
   }
-  temp->next = lista->last;
-  lista->last = temp;
+  temp->next = stack->last;
+  stack->last = temp;
   
 }
 
-void Pop(Lista *lista, Element *element)
+void Pop(Stack *stack, Element *element)
 {
-    if(lista == NULL) return;
+    if(stack == NULL) return;
 
-    if(lista->last == NULL) return;
+    if(stack->last == NULL) return;
  
-    lista->count--;
+    stack->count--;
+    
     if(element!=NULL)
+      element->data = stack->last->data;
+    else if(stack->typeOfData == _Custom)
     {
-      element->data = lista->last->data;
-      //element->el = lista->last->el;
+      free(stack->last->data._custom);
     }
 
-    if(lista->last->next != NULL)
+    if(stack->last->next != NULL)
     {
-      Element *temp = lista->last->next;
-      //free(lista->last->el);
-      free(lista->last);
-      lista->last = temp;
+      Element *temp = stack->last->next;
+      free(stack->last);
+      stack->last = temp;
     }
     else
     {
-      //free(lista->last->el);
-      free(lista->last);
-      lista->last = NULL;
-      lista->first = NULL;
+      free(stack->last);
+      stack->last = NULL;
+      stack->first = NULL;
     }
 }
 
-int Top(Lista *lista)
+int Top(Stack *stack)
 {
-    if(lista == NULL) return -2;
-    return lista->count;
+    if(stack == NULL) return -2;
+    return stack->count;
 }
 
-void Clear(Lista *lista)
+void Clear(Stack *stack)
 {
-  while (Count(lista)!=0)
-     Pop(lista,NULL);
+  while (Count(stack)!=0)
+     Pop(stack,NULL);
 }
 
-int Count(Lista *lista)
+int Count(Stack *stack)
 {
-  return lista->count;
+  return stack->count;
 }
 
-int Print(Lista *lista,size_t n_lastelements, FILE *stream)
+int Print(Stack *stack,size_t n_lastelements, FILE *stream)
 {
-  if(lista==NULL);
-  Element *el = lista->last;
+  if(stack==NULL);
+  Element *el = stack->last;
   size_t count=0;
-  while ( el != NULL && count++ < n_lastelements)
+  char *format;
+
+  switch (stack->typeOfData)
   {
-    fprintf(stream,"%d, ",(TYPE_OF_DATA)el->data);
-    el = el->next;
+  case _Int: 
+    format = "%i,";
+    while ( el != NULL && count++ < n_lastelements)
+    {
+      fprintf(stream,format,el->data._int);
+      el = el->next;
+    }
+    break;
+  case _Char: 
+    format = "%c,";
+    while ( el != NULL && count++ < n_lastelements)
+    {
+      fprintf(stream,format,el->data._char);
+      el = el->next;
+    }
+    break;
+  case _Float: 
+    format = "%f,";
+    while ( el != NULL && count++ < n_lastelements)
+    {
+      fprintf(stream,format,el->data._float);
+      el = el->next;
+    }
+    break;
+  case _Double: 
+    format = "%ld,";
+    while ( el != NULL && count++ < n_lastelements)
+    {
+      fprintf(stream,format,el->data._double);
+      el = el->next;
+    }
+    break;
+  default:  fprintf(stream,"Can't print Custom values\n");
+    return;
   }
+
+ 
+}
+
+int GetDataType(Stack *stack)
+{
+  return stack->typeOfData;
+}
+
+Element SetValue( _data_type data)
+{   
+  Element element;
+  element.data = data;
+  return element;
+}
+
+_data_type GetValue(Element element)
+{
+    return element.data;
 }
