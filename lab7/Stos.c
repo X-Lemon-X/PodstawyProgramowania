@@ -13,13 +13,8 @@ void Init(Lista *lista)
 void Push(Lista *lista, Element element)
 {   
   Element *temp = (Element*)malloc(sizeof(Element));
-  
- // if(element==NULL) return;
-
   temp->data = element.data;
-  //temp->el = element.el;
   element.next==NULL;
-
   lista->count++;
 
   if(lista->first==NULL)
@@ -92,25 +87,3 @@ int Print(Lista *lista,size_t n_lastelements, FILE *stream)
     el = el->next;
   }
 }
-
-/*
-void main()
-{
-  Element el;
-  Lista lista;
-
-  int ele = Top(&lista);
-  el.data = 1;
-
-  Push(&lista,&el);
-  el.data =2;
-  Push(&lista,&el);
-  el.data =3;
-  Push(&lista,&el);
-  Print(&lista,stdout);
-    Pop(&lista,&el);
-    Pop(&lista,&el);
-    Pop(&lista,&el);
-  Print(&lista,stdout);
-}
-*/

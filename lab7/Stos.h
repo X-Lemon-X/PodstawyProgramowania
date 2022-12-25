@@ -6,17 +6,6 @@
 
 typedef int TYPE_OF_DATA;
 
-union Element_data
-{
-    int _int;
-    char _char;
-    long _long;
-    float _float;
-    double _double;
-    void* _void;
-};
-
-
 
 typedef struct  {
     void* el;
