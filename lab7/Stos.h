@@ -64,7 +64,7 @@ int Print(Stack *stack, size_t n_lastelements, FILE *stream);
 //zwraca rodzaj danych jaki jest n astosie
 int GetDataType(Stack *stack);
 
-//ustawia wartość elemen pozwala skrócic zapis o 1 linijkę
+//ustawia wartość elemen pozwala skrócic zapis o 1 kropkę
 Element SetValue(_data_type data);
 
 //pobiera wartość elementu pozwala skrócic zapis o 1 linijkę

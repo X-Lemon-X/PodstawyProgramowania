@@ -12,9 +12,11 @@ int main()
   Element elem;
   Stack numbers;
   Init(&numbers,_Int);
+
   char buf[SIZE];
-  char oper='\0', signNext;
+  char oper='\0';
   int arg, conditionLoop=1;
+
   printf("Calculator start:\n");
 
   while(conditionLoop){
@@ -89,7 +91,6 @@ int main()
       Element el1, el2;
       Pop(&numbers,&el2);
       Pop(&numbers,&el1);
-
       int num1=GetValue(el1)._int, num2=GetValue(el2)._int, result=0, cond=1;
       char*info="";
       switch (oper)

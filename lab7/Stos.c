@@ -84,9 +84,8 @@ int Print(Stack *stack,size_t n_lastelements, FILE *stream)
   size_t count=0;
   char *format;
 
-  switch (stack->typeOfData)
-  {
-  case _Int: 
+  switch (stack->typeOfData){
+  case _Int: {
     format = "%i,";
     while ( el != NULL && count++ < n_lastelements)
     {
@@ -94,7 +93,8 @@ int Print(Stack *stack,size_t n_lastelements, FILE *stream)
       el = el->next;
     }
     break;
-  case _Char: 
+  }
+  case _Char:{ 
     format = "%c,";
     while ( el != NULL && count++ < n_lastelements)
     {
@@ -102,7 +102,8 @@ int Print(Stack *stack,size_t n_lastelements, FILE *stream)
       el = el->next;
     }
     break;
-  case _Float: 
+  }
+  case _Float:{ 
     format = "%f,";
     while ( el != NULL && count++ < n_lastelements)
     {
@@ -110,7 +111,8 @@ int Print(Stack *stack,size_t n_lastelements, FILE *stream)
       el = el->next;
     }
     break;
-  case _Double: 
+  }
+  case _Double: {
     format = "%ld,";
     while ( el != NULL && count++ < n_lastelements)
     {
@@ -118,11 +120,14 @@ int Print(Stack *stack,size_t n_lastelements, FILE *stream)
       el = el->next;
     }
     break;
-  default:  fprintf(stream,"Can't print Custom values\n");
-    return;
+  }
+  default:{ 
+    fprintf(stream,"Can't print Custom values\n");
+    return -2;
+  }
   }
 
- 
+  return count-1;
 }
 
 int GetDataType(Stack *stack)
