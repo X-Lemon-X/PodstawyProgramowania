@@ -7,19 +7,21 @@ void clearbuff(void *buffor, size_t size);
 
 int main()
 {
-  Element elem;
+  // inicjalizacja stosu
   Lista numbers;
   Init(&numbers);
   char buf[SIZE];
   char oper='\0', signNext;
-  int arg;
+  int arg, conditionLoop=1;
   printf("Calculator start:\n");
 
-  while(1){
+  while(conditionLoop){
     
+    //czyści buffor wejśćiowy
     clearbuff(buf,SIZE);
-    scanf("%40s", buf); 
-
+    //zczytuje dane wejsciowe do buffora
+    scanf("%40s", buf);
+    //spraddza czy wprowadzona wartość jest liczbą  
     if(isdigit(buf[0]) || (buf[0]== '-' && isdigit(buf[1]))) 
     {
       Element el; el.data=atoi(buf);
@@ -27,11 +29,13 @@ int main()
     }
     else oper = buf[0];
 
+    // tu wykonywanie są wszytskie opreacje poleceniowe literowe
     if(isalpha(oper)){
     switch (oper)
     {
     case 'q':{ Clear(&numbers);
-      return;
+      conditionLoop=0;
+      break;
     }
     case 'P':{ Pop(&numbers,NULL);
       break;
@@ -75,13 +79,14 @@ int main()
     }
     }
 
-    if(!isalpha(oper) && Count(&numbers)>=2)
+    // tu wykonuje operacje na liczbach w pamięci 
+    if(!isalpha(oper) && Count(&numbers)>=2 && oper!='\0')
     { 
       Element el1, el2;
       Pop(&numbers,&el2);
       Pop(&numbers,&el1);
-      int num1=el1.data, num2=el2.data, result, cond=1;
-     
+      int num1=el1.data, num2=el2.data, result=0, cond=1;
+      char*info="";
       switch (oper)
       {
       case '+':
@@ -94,7 +99,8 @@ int main()
         result = num1*num2;
         break;
       case '/':
-        result = num1/num2;
+        if(num2!=0) result = num1/num2;
+        else {cond=0; info = " Dividing by zero!";} 
         break;
       default: cond=0;
         break;
@@ -108,10 +114,11 @@ int main()
       else{
         Push(&numbers,el1);
         Push(&numbers,el2);
-        printf("Invalid operation! [%c]\n",oper); 
+        printf("Invalid operation! [%c] %s\n",oper,info); 
       }
     }
 
+    //wyśiwtela za każdym razem wszytskie liczby dostępnew pamięći
     printf("Numbers[");
     Print(&numbers,Count(&numbers),stdout);
     printf("]\n");
@@ -122,6 +129,8 @@ int main()
   return 0;
 }
 
+
+//zapełna buffor zerami
 void clearbuff(void *buffor, size_t size)
 {
   for (size_t i = 0; i < size; i++)

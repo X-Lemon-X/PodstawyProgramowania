@@ -3,12 +3,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// inicjalizuje stos
 void Init(Lista *lista)
 {
   lista->count=0;
   lista->first=NULL;
   lista->last=NULL;
 }
+
 
 void Push(Lista *lista, Element element)
 {   
@@ -61,14 +63,13 @@ void Pop(Lista *lista, Element *element)
 int Top(Lista *lista)
 {
     if(lista == NULL) return -2;
-
     return lista->count;
 }
 
 void Clear(Lista *lista)
 {
-  for (size_t i = 0; i < Count(lista); i++)
-    Pop(lista,NULL);
+  while (Count(lista)!=0)
+     Pop(lista,NULL);
 }
 
 int Count(Lista *lista)
