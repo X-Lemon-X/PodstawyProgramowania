@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+//#define NDEBUG
+#include <assert.h>
+
 typedef struct
 {
     size_t x;
@@ -72,8 +75,6 @@ printf( "%d\n" , *( ti + *tp4 [ *( ti + 3 ) ] ) ) ;
     return 1;
 }
 
-
-
  int MaxEl(int *tablica, size_t size)
  {
     int maxprev=*tablica;
@@ -84,6 +85,7 @@ printf( "%d\n" , *( ti + *tp4 [ *( ti + 3 ) ] ) ) ;
     }
     return maxprev;
  }
+
 #define LENGTH 40
  void dopisz(char *p, char *q)
  {
@@ -93,7 +95,6 @@ printf( "%d\n" , *( ti + *tp4 [ *( ti + 3 ) ] ) ) ;
     p+=sizeP;
     for (;sizeQ--;) *p++ = *q++;
  }
-
 
 
 int strlenV2( char *str)
@@ -118,6 +119,13 @@ int strlenV3( char str[])
     return count;
 }
 
+int porownaj_int(const void *p1, const void *p2) {
+    int *i = (int *)p1;
+    int *j = (int *)p2;
+    if (*i > *j) return (1);
+    if (*i < *j) return (-1);
+    return (0); 
+}
 
 int main(int agr, char *args[]){
 

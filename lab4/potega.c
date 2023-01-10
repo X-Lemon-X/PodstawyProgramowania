@@ -7,6 +7,7 @@ int main(int argc, char* argv[])
 {
     if(argc > 1)
     {
+        printf("%i\n",argc);
         int x = atoi(argv[1]);
         int n = atoi(argv[2]);
         printf("wynik: %i" ,potega(x,n));
